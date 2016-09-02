@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<suite name="WebSmokeSuite" parallel="false">
+	<listeners>
+		<!-- listener class-name="com.devstringx.utils.LoggingOperations" / -->
+		<listener class-name="com.devstringx.utils.ExtentReporterNG" />
+
+	</listeners>
+
+	<test name="Tieit">
+		<classes>
+			<class name="com.devstringx.tests.web.RSA.SettingTab">
+			<!--class name="com.devstringx.tests.web.RSA"/-->
+		</classes>
+	</test>
+</suite>

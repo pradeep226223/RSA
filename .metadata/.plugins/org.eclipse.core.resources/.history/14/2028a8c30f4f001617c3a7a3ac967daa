@@ -1,0 +1,79 @@
+package com.devstringx.tests.web.Tieit.CRM;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.testng.annotations.Test;
+
+import com.devstringx.tests.web.Tieit.Functions.CommonFunctions;
+import com.devstringx.utils.AssertionOperations;
+import com.devstringx.utils.FileOperations;
+
+import org.openqa.selenium.support.ui.Select;
+
+public class CRM_Deal extends CommonFunctions
+{
+	public static String rndm = generateRandomAlphaNumeric(2);
+	@Test
+	public static void verifyuserabletochangestatusdealofwon() throws InterruptedException
+	{
+		//moveMouseAndClick("//a[@class='active']//span[text()='CRM']","//a[text()='Deals']");
+		String url = FileOperations.getValueFromPropertyFile(configFilePath, "baseUrl");
+		getWebDriver().navigate().to(url + "crm/deals/list_deals"); 
+		waitUntilWebElementClickable("addDealBtn_xpath",120);
+		Click("addDealBtn_xpath");
+		waitUntilWebElementClickable("dealContactPerson_xpath",120);
+		String s="Test"+rndm;
+		Thread.sleep(5000);
+		TypeText("dealContactPerson_xpath",s);
+		//waitUntilWebElementClickable("addNewContactDropdown_xpath",120);
+		//selectValueFromlistUsingText("addNewContactDropdown_xpath","Add a New Contact");
+		waitUntilWebElementClickable("Dealaddnewconatactfromlist_xpath",120);
+		Thread.sleep(5000);
+		//Click("Dealaddnewconatactfromlist_xpath");
+		moveMouseAndClick("Dealaddnewconatactfromlist_xpath","Dealaddnewconatactfromlist_xpath");
+		waitUntilWebElementClickable("DealAddContactEmail_Xpath",120);
+		String EmailSubject="TestEmail"+rndm+"@gmail.com";
+		TypeText("DealAddContactEmail_Xpath", EmailSubject);
+		waitUntilWebElementClickable("DealAddConatactSave_Xpath",120);
+		Click("DealAddConatactSave_Xpath");
+		Thread.sleep(3000);
+		waitUntilWebElementClickable("dealAssigneedropdown_xpath",120);
+		Thread.sleep(10000);
+	//	selectValueFromlistUsingText("dealAssigneedropdown_xpath","Gaurav Singh");
+		String value="Gaurav";
+	    getWebDriver().findElement(By.xpath("//li[contains(text(),'"+value+"')]")).click();
+	   
+		Thread.sleep(3000);
+		//selectValueFromlistUsingText("dealPipelineDropdown_xpath","Pipeline");
+		Click("dealPiplinedropdowncontrolclick_xpath");
+		Thread.sleep(2000);
+		Click("dealPiplinedselectvaluefromdropdown_xpath");
+		Thread.sleep(3000);
+		waitUntilWebElementClickable("dealSubmitBtn_xpath",120);
+		Click("dealSubmitBtn_xpath");
+		}
+	public void dealwonverify()
+	{
+		waitUntilWebElementClickable("dealgridValue_xpath",120);
+		Thread.sleep(3000);
+		SelectElementFromColumns("dealgridValue_xpath",s);
+		Thread.sleep(3000);
+		waitUntilWebElementClickable("deal3dots_xpath",120);
+		Click("deal3dots_xpath");
+		Thread.sleep(3000);
+		Click("deal3dotsWon_xpath");
+		Thread.sleep(3000);
+		Click("deal3dotswonconfrim_xpath");
+		Thread.sleep(3000);
+		String Deal_Status="Won";
+		int i=getWebDriver().findElements(By.xpath("//p[contains(text(),'"+Deal_Status+"')]")).size();
+		AssertionOperations.verifyStringsEquality(i,1);
+		
+	}
+	
+	public void clickoncanceldealwonpop(){
+		//deal won cancel
+		Click("dealwonopopcancel_xpath");
+	}
+
+}

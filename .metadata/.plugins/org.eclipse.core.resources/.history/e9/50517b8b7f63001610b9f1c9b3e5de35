@@ -1,0 +1,260 @@
+package com.devstringx.tests.web.RSALogin;
+
+import org.openqa.selenium.By;
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
+import com.devstringx.tests.web.RSA.Functions.CommonFunctions;
+import com.devstringx.utils.AssertionOperations;
+import com.devstringx.utils.ExtentReporterNG;
+import com.devstringx.utils.FileOperations;
+
+public class DealForSimpleUser extends CommonFunctions {
+	static String rndm = generateRandomAlphaNumeric(3);
+	static String dealName;
+	
+	/***
+	 * Check if Simple Access user is able to Add a deal
+	 * @throws InterruptedException
+	 */
+
+	@Test(priority=1)
+	public static void checkAddDealOnSimpleUser() throws InterruptedException
+	{
+		Logout();
+		loginAsSimpleUser();
+		String url = FileOperations.getValueFromPropertyFile(configFilePath, "baseUrl");
+		getWebDriver().navigate().to(url + "/crm/deals/list_deals"); // Need to look
+		Thread.sleep(1000);
+
+		//Click on + ADD deal button at top right corner
+		openAddDealWindow();
+
+		//Select the desired contact from contact person field
+		TypeText("dealContactPerson_xpath","Simplecontact");
+		Thread.sleep(1000);
+		Click("existingContactListOption_xpath");
+
+		dealName = "DealOfSimpleUser"+rndm;
+		//enter RandomUnique deal name
+		TypeText("dealNameTextField_xpath",dealName);
+		// Select the Assignee
+		Click("dealAssigneedropdown_xpath");
+		Click("simpleUserAssignee_xpath");
+
+		//Select the Pipeline
+		Click("dealPipelineDropdown_xpath");
+		Click("dealPipelineFirstOption_xpath");
+		Thread.sleep(1000);
+		//Click on Submit Button
+		submitDeal();
+		getWebDriver().navigate().to(url + "/crm/deals/list_deals"); // Need to look
+		Thread.sleep(1000);
+
+		int count2 = getWebDriver().findElements(By.xpath("//div[@id='dealsGrid']/div/table/tbody/tr/td/a[text()='"+dealName+"']")).size();
+		if(count2>=1){
+			Assert.assertTrue(true);
+		}
+		else
+		{			ExtentReporterNG.screenshotname=takeScreenshot("dealAccessbilityForSimpleUser");
+		ExtentReporterNG.failurereason = "dealAccessbilityForSimpleUser = "+ count2+ " ";
+		Assert.fail();
+		}
+	}
+	
+	/***
+	 * Check deal gets listed in Simple Access User dashboard after updating the deal assignee
+	 * @throws InterruptedException 
+	 */
+	@Test(priority=2)
+	public static void changeAssigneeFromSimpleUser() throws InterruptedException
+	{
+		String url = FileOperations.getValueFromPropertyFile(configFilePath, "baseUrl");
+		getWebDriver().navigate().to(url + "/crm/deals/list_deals"); // Need to look
+		Thread.sleep(1000);
+
+		//Click on + ADD deal button at top right corner
+		openAddDealWindow();
+
+		//Select the desired contact from contact person field
+		TypeText("dealContactPerson_xpath","DealContact");
+		Thread.sleep(1000);
+		Click("existingContactListOption_xpath");
+
+		dealName = "TestDealWithAssignee"+rndm;
+		//enter RandomUnique deal name
+		TypeText("dealNameTextField_xpath",dealName);
+		// Select the Assignee
+		Click("dealAssigneedropdown_xpath");
+		Click("simpleUserAssignee_xpath");
+
+		//Select the Pipeline
+		Click("dealPipelineDropdown_xpath");
+		Click("dealPipelineFirstOption_xpath");
+		Thread.sleep(1000);
+		//Click on Submit Button
+		submitDeal();
+
+
+		String actualSuccessMessage = getText("ValidationPopupmessage_xpath");
+		AssertionOperations.verifyStringsEquality(actualSuccessMessage,"Deal added successfully.");
+		Thread.sleep(1000);
+		pagescrollDown();
+		Thread.sleep(1000);
+		pagescrollDown();
+		waitUntilWebElementVisible("dealAssignee_id", 120);
+		moveMouse("dealAssignee_id");
+		Click("dealDetailAssigneeEditIcon_xpath");
+		selectValueFromlistUsingText("assigneeDealDropdown_xpath", "Gaurav Singh");
+		Click("assigneeSubmitCheckBtn_xpath");
+		Thread.sleep(1000);
+		//logout and login as simple user
+		Logout();
+		loginAsSimpleUser();
+		//The deal created should be displayed in deal listing page of the Simple access user 
+		getWebDriver().navigate().to(url + "/crm/deals/list_deals"); // Need to look
+		Thread.sleep(1000);
+
+		int count2 = getWebDriver().findElements(By.xpath("//div[@id='dealsGrid']/div/table/tbody/tr/td/a[text()='"+dealName+"']")).size();
+		if(count2==0){
+			Assert.assertFalse(true);
+		}
+		else
+		{
+			ExtentReporterNG.screenshotname=takeScreenshot("changeAssigneeFromSimpleUser");
+			ExtentReporterNG.failurereason = "changeAssigneeFromSimpleUse = "+ count2+ " ";
+			Assert.fail();
+
+		}
+
+
+
+	}
+	
+	/***
+	 *  Full access user creating deal and assigning to Simple Access user
+	 * @throws InterruptedException 
+	 */
+	@Test(priority=2)
+	public static void dealAccessbilityForSimpleUser() throws InterruptedException
+	{
+		String url = FileOperations.getValueFromPropertyFile(configFilePath, "baseUrl");
+		getWebDriver().navigate().to(url + "/crm/deals/list_deals"); // Need to look
+		Thread.sleep(1000);
+
+		//Click on + ADD deal button at top right corner
+		openAddDealWindow();
+
+		//Select the desired contact from contact person field
+		TypeText("dealContactPerson_xpath","DealContact");
+		Thread.sleep(1000);
+		Click("existingContactListOption_xpath");
+
+		dealName = "TestDealForSimpleUser"+rndm;
+		//enter RandomUnique deal name
+		TypeText("dealNameTextField_xpath",dealName);
+		// Select the Assignee
+		Click("dealAssigneedropdown_xpath");
+		Click("simpleUserAssignee_xpath");
+
+		//Select the Pipeline
+		Click("dealPipelineDropdown_xpath");
+		Click("dealPipelineFirstOption_xpath");
+		Thread.sleep(1000);
+		//Click on Submit Button
+		submitDeal();
+
+
+		String actualSuccessMessage = getText("ValidationPopupmessage_xpath");
+		AssertionOperations.verifyStringsEquality(actualSuccessMessage,"Deal added successfully.");
+		Thread.sleep(1000);
+		//logout and login as simple user
+		Logout();
+		loginAsSimpleUser();
+		//The deal created should be displayed in deal listing page of the Simple access user 
+		getWebDriver().navigate().to(url + "/crm/deals/list_deals"); // Need to look
+		Thread.sleep(1000);
+
+		int count = getWebDriver().findElements(By.xpath("//div[@id='dealsGrid']/div/table/tbody/tr/td/a[text()='"+dealName+"']")).size();
+		if(count>=1){
+			Assert.assertTrue(true);
+		}
+		else
+		{
+			Assert.fail();
+		}
+
+		//logout and login as Full Access user
+		Logout();
+		Login();
+		//The deal created should be displayed in deal listing page of the Simple access user 
+		getWebDriver().navigate().to(url + "/crm/deals/list_deals"); // Need to look
+		Thread.sleep(1000);
+
+		int count2 = getWebDriver().findElements(By.xpath("//div[@id='dealsGrid']/div/table/tbody/tr/td/a[text()='"+dealName+"']")).size();
+		if(count2>=1){
+			Assert.assertTrue(true);
+		}
+		else
+		{			ExtentReporterNG.screenshotname=takeScreenshot("dealAccessbilityForSimpleUser");
+		ExtentReporterNG.failurereason = "dealAccessbilityForSimpleUser = "+ count2+ " ";
+		Assert.fail();
+		}
+
+	}
+
+	
+	@Test(priority=3)
+	public static void deleteDealFromSimpleUser() throws InterruptedException
+	{
+		String url = FileOperations.getValueFromPropertyFile(configFilePath, "baseUrl");
+		getWebDriver().navigate().to(url + "/crm/deals/list_deals"); // Need to look
+		Thread.sleep(1000);
+
+		//Click on + ADD deal button at top right corner
+		openAddDealWindow();
+
+		//Select the desired contact from contact person field
+		TypeText("dealContactPerson_xpath","DealContact");
+		Thread.sleep(1000);
+		Click("existingContactListOption_xpath");
+
+		dealName = "DealOfUser"+rndm;
+		//enter RandomUnique deal name
+		TypeText("dealNameTextField_xpath",dealName);
+		// Select the Assignee
+		Click("dealAssigneedropdown_xpath");
+		Click("simpleUserAssignee_xpath");
+
+		//Select the Pipeline
+		Click("dealPipelineDropdown_xpath");
+		Click("dealPipelineFirstOption_xpath");
+		Thread.sleep(1000);
+		//Click on Submit Button
+		submitDeal();
+		Thread.sleep(3000);
+		
+		Logout();
+		loginAsSimpleUser();
+		
+		
+		getWebDriver().navigate().to(url + "/crm/deals/list_deals"); // Need to look
+		Thread.sleep(1000);
+
+		//Filter Deal Of Simple User Assignees
+		Click("assigneeNameSettingBtn_xpath"); //click on setting for open filter
+		moveMouseAndClick("filterOption_xpath","filterMenufirstSelectValueDropdown_xpath");
+		Click("simpleUserAsigneefilterOption_xpath");
+		//5) Click the Filter button
+		Click("menuFilterBtn_xpath");
+		Thread.sleep(1000);
+	
+		//Click on Delete button corresponding to the deal that needs to be deleted
+		Click("firstRowdeleteBtn_xpath");
+		waitUntilWebElementClickable("popUpDeleteBtn_xpath", 120);
+		Click("popUpDeleteBtn_xpath");
+		String deleteSuccessfullmsg = getText("ValidationPopupmessage_xpath");
+		AssertionOperations.verifyStringsEquality(deleteSuccessfullmsg,"You have no privileges to delete this deal.");
+	}
+	
+}

@@ -1,0 +1,120 @@
+package com.devstringx.tests.web.RSALogin;
+
+
+import org.openqa.selenium.By;
+import org.testng.annotations.Test;
+
+import com.devstringx.tests.web.RSA.Functions.CommonFunctions;
+import com.devstringx.utils.AssertionOperations;
+import com.devstringx.utils.FileOperations;
+
+public class CallActivity extends CommonFunctions{
+
+
+	public static void DealSelectFromGrid() throws InterruptedException{
+		String URL=FileOperations.getValueFromPropertyFile(configFilePath, "baseUrl");
+		getWebDriver().navigate().to(URL+"crm/deals/list_deals");
+		waitUntilWebElementClickable("select2itemfromdealdetail_xpath",120);
+		Thread.sleep(3000);
+		Click("select2itemfromdealdetail_xpath");
+
+	} 
+
+	public static void VerifyCallTabFromActivityTab() throws InterruptedException{
+		//call tab selected by default
+		DealSelectFromGrid();
+		waitUntilWebElementClickable("ActivityDeal_XPath",120);
+		Click("ActivityDeal_XPath");
+		waitUntilWebElementClickable("CallActivityTab_Xpath",120);
+		Click("CallActivityTab_Xpath");
+		String Text=getText("CallActivityCallHighlightedTab_Xpath");
+		AssertionOperations.verifyStringsEquality(Text, "Call");
+		Thread.sleep(3000);
+		Click("CallActivityCancelButton_xpath");
+	}
+
+	public static void VerifyCallTabFromCreateActivityTab() throws InterruptedException{
+		//call tab selected by default
+		DealSelectFromGrid();
+		waitUntilWebElementClickable("CreateActivityTab_Xpath",120);
+		Thread.sleep(3000);
+		Click("CreateActivityTab_Xpath");
+		waitUntilWebElementClickable("CallActivityCallHighlightedTab_Xpath",120);
+		Thread.sleep(3000);
+		String Text=getText("CallActivityCallHighlightedTab_Xpath");
+		AssertionOperations.verifyStringsEquality(Text, "Call");
+		Thread.sleep(3000);
+		Click("CallActivityCancelButton_xpath");
+	}
+
+	public static void VerifyInCallDefaultContact() throws InterruptedException{
+		//Default contact shown in contacts (same Contact as shown on page)
+
+		String URL=FileOperations.getValueFromPropertyFile(configFilePath, "baseUrl");
+		getWebDriver().navigate().to(URL+"crm/deals/list_deals");
+		waitUntilWebElementClickable("select2itemfromdealdetail_xpath",120);
+		Thread.sleep(3000);
+		String name1=getWebDriver().findElement(By.xpath("//tbody[@role='rowgroup']//tr[2]/td[4]")).getText();
+		System.out.println(name1);
+		Thread.sleep(3000);
+		Click("select2itemfromdealdetail_xpath");
+		waitUntilWebElementClickable("ActivityDeal_XPath",120);
+		Thread.sleep(3000);
+		Click("ActivityDeal_XPath");
+		waitUntilWebElementClickable("CallActivityTab_Xpath",120);
+		Thread.sleep(3000);
+		Click("CallActivityTab_Xpath");
+		Thread.sleep(3000);
+		String name2=getText("ActivityCallContact_Xpath");
+		System.out.println(name2);
+		AssertionOperations.verifyStringsEquality(name1,name2);
+		Click("CallActivityCancelButton_xpath");
+	}
+	@Test
+	public static void VerifyUserAbletoCreateAndSave() throws InterruptedException{
+		DealSelectFromGrid();
+		waitUntilWebElementClickable("CreateActivityTab_Xpath",120);
+		Thread.sleep(1000);
+		Click("CreateActivityTab_Xpath");
+		Thread.sleep(5000);
+		Click("TaskTitleTextBox_xpath");
+		Thread.sleep(1000);
+		TypeText("TaskTitleTextBox_xpath", "Test1");
+		Thread.sleep(1000);
+		Click("DescriptionTexBox_Xpath");
+		Thread.sleep(1000);
+		TypeText("DescriptionTexBox_Xpath","TestDescription1");
+		Thread.sleep(3000);
+		//Click("Clickondatebutton_xpath");
+		//Thread.sleep(5000);
+		
+		//SelectElementFromColumns("DatePicker_Xpath","29");//Not working
+		Click("DescriptionTexBox_Xpath");
+		Thread.sleep(2000);
+		TypeText("Time_Xpath","06:36 AM");
+		Thread.sleep(2000);
+		//Click("DurationArrowButton_Xpath");
+		Thread.sleep(2000);
+		selectValueFromlistUsingText("SelectDuration_Xpath","00:45");
+		
+		Thread.sleep(2000);
+		//Click("AnsweredRadioButton_Xpath");
+		Thread.sleep(2000);
+		Click("SubmitAndClose_Xpath");
+	}
+
+public static void VerifyAfterSavingInfoShouldResetInPopUp() throws InterruptedException{
+	VerifyUserAbletoCreateAndSave();
+}
+
+}
+
+
+
+
+
+
+
+
+
+

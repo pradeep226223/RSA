@@ -1,0 +1,489 @@
+package com.devstringx.tests.web.RSALogin;
+import org.openqa.selenium.By;
+import org.testng.annotations.Test;
+
+import com.devstringx.tests.web.RSA.Functions.CommonFunctions;
+import com.devstringx.utils.AssertionOperations;
+import com.devstringx.utils.FileOperations;
+
+import java.awt.AWTException;
+
+/*********************************************************************
+ ********* Editing a Contact from Contact Detail page************
+ *********************************************************************/
+
+public class ContactDetailPage extends CommonFunctions{
+
+	public static String rndm = generateRandomString(2);
+	static String TestSource = "editTestSource";
+	public static String newSourceForTest = TestSource+rndm;
+	static String LastMethod = "TestLastMethod"+rndm;
+	static String groupName = "NewGroupForTest"+rndm;
+
+
+
+
+	/***
+	 * Change the Source for a Contact to Existing Source
+	 * @throws InterruptedException
+	 ****/
+	@Test (priority=1)
+	public static void changeExistingSourceInContact() throws InterruptedException, AWTException
+	{
+		//1) Hover over CRM ,2) Click on Contacts
+		//moveMouseAndClick("CRMTab_xpath","CRMContactTab_xpath");
+		String url = FileOperations.getValueFromPropertyFile(configFilePath, "baseUrl");
+		getWebDriver().navigate().to(url + "contacts/lists"); // Need to look
+
+		//3. Click on First Name 
+		Click("FirstContactName_xpath");
+
+
+		//4) Click the pencil to edit the Source
+		moveMouseAndClick("SourceValue_xpath", "SourceEditBtn_xpath"); //hover the source and click edit btn
+		Thread.sleep(3000);
+
+		//5)Start typing your Source.
+
+		TypeText("sourceInputBox_id", "Twitter");
+		Thread.sleep(1000);
+		deleteSinglechar("sourceInputBox_id");
+		Thread.sleep(1000);
+		typeKeys("sourceInputBox_id","r");
+		Thread.sleep(3000);
+		//6) Select the Source
+		Click("sourceFirstOption_xpath"); 
+		//Thread.sleep(3000);
+
+		//7) Click Check mark (blue button) ---- no need to automate this step
+		Thread.sleep(2000);
+
+		String selectedSourceVal = getText("SourceValue_xpath");
+
+		AssertionOperations.verifyStringsEquality("Twitter",selectedSourceVal); //verify source get changed successfully
+
+	}
+
+
+	/***
+	 *Change the Source for a Contact to new Source
+	 * @throws InterruptedException 
+	 */
+
+	@Test(priority=2)
+	public static void changeSourceByAddingNew() throws InterruptedException
+	{
+
+		//1) Hover over CRM ,2) Click on Contacts
+		//Click("CRMTab_xpath");
+		//moveMouseAndClick("CRMTab_xpath","CRMContactTab_xpath");
+
+		String url = FileOperations.getValueFromPropertyFile(configFilePath, "baseUrl");
+		getWebDriver().navigate().to(url + "contacts/lists"); // Need to look
+
+		//3. Click on First Name 
+		Click("FirstContactName_xpath");
+
+		waitUntilWebElementVisible("SourceValue_xpath", 120);
+		//4) Click the pencil to edit the Source
+		moveMouseAndClick("SourceValue_xpath", "SourceEditBtn_xpath"); //hover the source and click edit btn
+		Thread.sleep(3000);
+
+		//5) Start typing your New Source. 
+		TypeText("sourceInputBox_id", newSourceForTest);
+
+		//6) Click Check mark (blue button)
+		Click("sourceCheckBtn_xpath");
+		Thread.sleep(3000);
+
+		waitUntilWebElementVisible("ValidationPopupHeader_xpath", 120);
+
+		String selectedSourceVal = getText("SourceValue_xpath");
+		AssertionOperations.verifyStringsEquality(newSourceForTest,selectedSourceVal); //verify source get changed successfully
+
+	}
+
+
+
+	/***
+	 * Edit the First Touch
+	 * @throws InterruptedException 
+	 */
+	@Test(priority=3)
+	public static void editFirstTouch() throws InterruptedException
+	{
+
+		//1) Hover over CRM ,2) Click on Contacts
+		//moveMouseAndClick("CRMTab_xpath","CRMContactTab_xpath");
+		String url = FileOperations.getValueFromPropertyFile(configFilePath, "baseUrl");
+		getWebDriver().navigate().to(url + "contacts/lists"); // Need to look
+
+		//3. Click on First Name 
+		Click("FirstContactName_xpath");
+
+		waitUntilWebElementVisible("SourceValue_xpath", 120);
+		//4) Click the pencil to edit the First Touch
+		moveMouseAndClick("firstTouchValue_xpath","firstTouchEditBtn_xpath");
+
+		//5) Select the Day
+		Click("calday_xpath");
+
+		//6) Select the Day and Minutes
+		Click("calhours_xpath"); 
+		Click("calminutes_xpath"); 
+
+		//7) Click Check mark (blue button)
+		Click("calenderCheckBtn_xpath");
+
+
+	}
+
+	/***
+	 *Edit the Last Touch
+	 * @throws InterruptedException 
+	 */
+	@Test(priority=4)
+	public static void editLastTouch() throws InterruptedException
+	{
+		//Click("CRMTab_xpath");
+		//1) Hover over CRM ,2) Click on Contacts
+		//moveMouseAndClick("CRMTab_xpath","CRMContactTab_xpath");
+
+		String url = FileOperations.getValueFromPropertyFile(configFilePath, "baseUrl");
+		getWebDriver().navigate().to(url + "contacts/lists"); // Need to look
+
+		//3. Click on First Name 
+		Click("FirstContactName_xpath");
+
+		waitUntilWebElementVisible("SourceValue_xpath", 120);
+		Thread.sleep(3000);
+
+		//4) Click the pencil to edit the Last Touch
+		moveMouseAndClick("lastTouchValue_xpath", "lastTouchEditBtn_xpath");
+
+		//5) Select the Day
+		Click("calday_xpath");
+
+		//6) Select the Day and Minutes
+		Click("calhours_xpath"); 
+		Click("calminutes_xpath"); 
+
+		//7) Click Check mark (blue button)
+		Click("calenderCheckBtn_xpath");
+
+	}
+
+
+
+	/***
+	 *Edit the Last Touch Method to Existing Method
+	 * @throws InterruptedException 
+	 */
+	@Test(priority=5)
+	public static void editLastTouchMethodToExisting() throws InterruptedException
+	{
+		//Click("CRMTab_xpath");
+		//1) Hover over CRM ,2) Click on Contacts
+		//moveMouseAndClick("CRMTab_xpath","CRMContactTab_xpath");
+		String url = FileOperations.getValueFromPropertyFile(configFilePath, "baseUrl");
+		getWebDriver().navigate().to(url + "contacts/lists"); // Need to look
+
+		//3. Click on First Name 
+		Click("FirstContactName_xpath");
+
+		waitUntilWebElementVisible("SourceValue_xpath", 120);
+
+		//4) Click the pencil to edit the Last Touch Method
+		moveMouseAndClick("lastTouchMethodValue_xpath", "lastTouchMethodEditBtn_xpath");
+
+		//5) Start typing your Last Touch Method. 
+		TypeText("lastTouchInputBox_id", "Direct");
+		Thread.sleep(100);
+
+		deleteSinglechar("lastTouchInputBox_id");
+		Thread.sleep(1000);
+
+		typeKeys("lastTouchInputBox_id","t");
+		Thread.sleep(100);
+
+		//6) Select the Last Touch Method
+		Click("lastTouchOption_xpath");
+
+		//7) Click Check mark (blue button) ---no need to click on it
+		Thread.sleep(1000);
+		String selectedLastMethod = getText("lastTouchMethodValue_xpath");
+		AssertionOperations.verifyStringsEquality(selectedLastMethod,"Direct"); //verify existing last method selected succesfully
+
+	}
+
+
+	/***
+	 *Edit the Last Touch Method to New Method
+	 * @throws InterruptedException 
+	 */
+	@Test(priority=6)
+	public static void editLastTouchMethodtoNew() throws InterruptedException
+	{
+
+		//1) Hover over CRM ,2) Click on Contacts
+		//moveMouseAndClick("CRMTab_xpath","CRMContactTab_xpath");
+		String url = FileOperations.getValueFromPropertyFile(configFilePath, "baseUrl");
+		getWebDriver().navigate().to(url + "contacts/lists"); // Need to look
+
+		//3. Click on First Name 
+		Click("FirstContactName_xpath");
+
+		waitUntilWebElementVisible("SourceValue_xpath", 120);
+
+		//4) Click the pencil to edit the Last Touch Method  	
+		moveMouseAndClick("lastTouchMethodValue_xpath", "lastTouchMethodEditBtn_xpath");
+		Thread.sleep(3000);
+
+		//5) Start typing your Last Touch Method. 
+		TypeText("lastTouchInputBox_id", LastMethod);
+
+		//6) Click Check mark (blue button)
+		Click("lastTouchMethodCheckBtn_xpath");
+		Thread.sleep(1000);
+		String selectedLastMethod = getText("lastTouchMethodValue_xpath");
+		AssertionOperations.verifyStringsEquality(selectedLastMethod,LastMethod); //verify new last method created succesfully
+
+	}
+
+	/***
+	 *Add Contact to Existing Group from Contact Detail page
+	 * @throws InterruptedException 
+	 ****/
+	@Test(priority=7)
+	public static void addContactToExistingGroup() throws InterruptedException
+	{
+		//1) Hover over CRM ,Click on Contacts
+		//moveMouseAndClick("CRMTab_xpath","CRMContactTab_xpath");
+		String url = FileOperations.getValueFromPropertyFile(configFilePath, "baseUrl");
+		getWebDriver().navigate().to(url + "contacts/lists"); // Need to look
+
+
+		//Precondition:Group must be added into account,and save number of contacts count
+		addGroup(groupName);
+		Thread.sleep(1000);
+
+		//go to contact list page and click on first name for go to detail page
+		getWebDriver().navigate().to(url + "contacts/lists"); // Need to look
+
+		Click("FirstContactName_xpath");
+
+		//2. Click on Group/List tab
+		waitUntilWebElementVisible("GrouplistDropdown_xpath", 120);
+		Click("GrouplistDropdown_xpath");
+
+		//3. Select Group/List from Tab menu
+		Click("GrouplistmenuOption_xpath");
+
+		//Select the desired group from dropdown
+		Click("Groupdropdownfield_id");
+		getWebDriver().findElement(By.xpath("//div[@id='select2-drop']/ul/li/div[text()='"+groupName+"']")).click();
+		Thread.sleep(1000);
+
+		//5. Click on + button
+		waitUntilWebElementClickable("addGroupPlusBtn_xpath", 120);
+		Click("addGroupPlusBtn_xpath");
+
+		//Contact should be added to the group
+		//a)verify successfull message
+		String successMsg = getText("ValidationPopupmessage_xpath");
+		AssertionOperations.verifyStringsEquality(successMsg, "Contact added to the group successfully!");
+
+		//b)verify group added on contact detail page
+		int count = getCount("addedGroupNamelist_xpath");
+		String addedGroupName = getWebDriver().findElement(By.xpath("//ul[contains(@class,'group-list')]/li["+count+"]")).getText();
+		AssertionOperations.verifyStringsEquality(addedGroupName, groupName);
+
+		//c)verify Number of contacts on group page
+		getWebDriver().navigate().to(url + "contacts/lists"); // Need to look
+		Thread.sleep(1000);
+		goToGroupPage();			
+		searchGroup(groupName);
+		Thread.sleep(1000);
+		String NumberOfContacts2 = getText("groupNumberOfContacts_xpath");
+		AssertionOperations.verifyStringsEquality(NumberOfContacts2, "1");
+
+
+	}
+
+
+
+	/***
+	 *Add Contact to New Group from Contact Detail page
+	 * @throws InterruptedException 
+	 ****/
+	//@Test(priority=8)
+	public static void addContactToNewGroup() throws InterruptedException
+	{
+		//1) Hover over CRM ,Click on Contacts
+		//moveMouseAndClick("CRMTab_xpath","CRMContactTab_xpath");
+		String url = FileOperations.getValueFromPropertyFile(configFilePath, "baseUrl");
+		getWebDriver().navigate().to(url + "contacts/lists"); // Need to look
+
+		// Click on First Name and go to Details Page
+		Click("FirstContactName_xpath");
+
+		//2. Click on Group/List tab
+		waitUntilWebElementVisible("GrouplistDropdown_xpath", 120);
+		Click("GrouplistDropdown_xpath");
+		//3. Select Group/List
+		Click("GrouplistmenuOption_xpath");
+
+		//Select the desired group from dropdown
+		Click("Groupdropdownfield_id");
+
+		Click("groupListAddnewGroupBtn_xpath");
+
+		waitUntilWebElementVisible("groupName_xpath", 120);
+		TypeText("groupName_xpath",groupName);
+
+		Click("groupVisiblityCheckbox_xpath");
+		Click("addSaveBtn_id");
+
+		//Contact should be added to the group
+
+		//a)verify successfull message
+		String successMsg = getText("ValidationPopupmessage_xpath");
+		AssertionOperations.verifyStringsEquality(successMsg, "Contact added to the group successfully!");
+
+		//b)verify group added on contact detail page
+		int count = getCount("addedGroupNamelist_xpath");
+		String addedGroupName = getWebDriver().findElement(By.xpath("//ul[contains(@class,'group-list')]/li["+count+"]")).getText();
+		AssertionOperations.verifyStringsEquality(addedGroupName, groupName);
+
+		//c)verify group on Group page
+		getWebDriver().navigate().to(url + "contacts/lists"); // Need to look
+		Thread.sleep(1000);
+		goToGroupPage();			
+		searchGroup(groupName);
+		Thread.sleep(1000);
+
+		int count2 = getCount("groupNumberOfContacts_xpath");
+		AssertionOperations.verifyStringsEquality(count, 1);
+
+	}
+
+
+	/***
+	 *Remove Contact from Group from Contact Detail page
+	 * @throws InterruptedException 
+	 ****/
+	//@Test(priority=9)
+	public static void removeGroupFromContact() throws InterruptedException
+	{
+		//1) Hover over CRM ,Click on Contacts
+		//moveMouseAndClick("CRMTab_xpath","CRMContactTab_xpath");
+		String url = FileOperations.getValueFromPropertyFile(configFilePath, "baseUrl");
+		getWebDriver().navigate().to(url + "contacts/lists"); // Need to look
+
+		// Click on First Name and go to Details Page
+		Click("FirstContactName_xpath");
+
+		//2. Click on Group/List tab
+		waitUntilWebElementVisible("GrouplistDropdown_xpath", 120);
+		Click("GrouplistDropdown_xpath");
+
+		Click("firstAddedGroupCrossBtn_xpath");
+		waitUntilWebElementVisible("confirmationPopupMessage_xpath", 120);
+
+		Click("confirmationYesBtn_xpath");
+
+
+
+		//Group should be removed to the group
+		String successMsg = getText("ValidationPopupmessage_xpath");
+		AssertionOperations.verifyStringsEquality(successMsg, "Group removed successfully");
+
+
+		//Contact should be removed from group
+		getWebDriver().navigate().to(url + "contacts/lists"); // Need to look
+		goToGroupPage();
+		searchGroup(groupName);
+
+		String expectedNoOfContacts = getText("groupNumberOfContacts_xpath");
+		//AssertionOperations.verifyStringsEquality(NumberOfContacts, expectedNoOfContacts);
+
+	}
+
+
+	//@Test(priority=9)
+	public static void AddDeal() throws InterruptedException{
+
+		String url = FileOperations.getValueFromPropertyFile(configFilePath, "baseUrl");
+		getWebDriver().navigate().to(url + "contacts/lists");
+
+		waitUntilWebElementVisible("Groupsname_Xpath",120);
+		Click("Groupsname_Xpath");
+		Thread.sleep(10000);
+		pagescrollDown();
+		waitUntilWebElementVisible("HideClick_Xpath",120);
+		Thread.sleep(2000);
+		Click("HideClick_Xpath");
+		Thread.sleep(2000);
+		waitUntilWebElementVisible("ActiveDealValue_Xpath",120);
+
+		String OldDealValue=getText("ActiveDealValue_Xpath");
+
+		Click("Addnewdeal_Xpath");
+		Thread.sleep(10000);
+		TypeText("POPDealValue_Xpath","2");
+		Thread.sleep(2000);
+		TypeText("POPprobability_Xpath","2");
+		Thread.sleep(2000);
+		Click("DPOPDateControl_Xpath");
+		Thread.sleep(2000);
+		Click("DateSelection_Xpath");
+		Thread.sleep(2000);
+		Click("POPSubmit_Xpath");
+		Thread.sleep(2000);
+		pagescrollDown();
+		waitUntilWebElementVisible("ActiveDealValue_Xpath",120);
+
+		String NewDealValue=getText("ActiveDealValue_Xpath");
+		System.out.println(NewDealValue);
+		System.out.println(OldDealValue);
+		String TimeLine=getText("timelineDeal_xpath");
+		AssertionOperations.verifyStringsEquality(TimeLine, "Deal");
+
+	}
+
+
+	public void DealStageAgeisDisplayed() throws InterruptedException{
+
+		waitUntilWebElementVisible("Groupsname_Xpath",120);
+		Click("Groupsname_Xpath");
+		Thread.sleep(10000);
+		pagescrollDown();
+		waitUntilWebElementVisible("HideClick_Xpath",120);
+		Thread.sleep(2000);
+		Click("HideClick_Xpath");
+		Thread.sleep(5000);
+		AssertionOperations.verifyElementEnabled("ActiveDealValue_Xpath");
+
+		String s=getText("ActiveDealValue_Xpath");
+		if (s.isEmpty())
+		{
+			System.out.println("Element not found");
+		}
+		else
+		{
+			System.out.println("Element found on page "+s);
+		}
+		AssertionOperations.verifyElementEnabled("ActiveDealAge_Xpath");
+
+		s=getText("ActiveDealValue_Xpath");
+		if (s.isEmpty())
+		{
+			System.out.println("Element not found");
+		}
+		else
+		{
+			System.out.println("Element found on page "+s);
+
+		}
+	}
+}

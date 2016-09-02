@@ -1,0 +1,115 @@
+package com.devstringx.tests.web.RSALogin;
+
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
+
+import com.devstringx.tests.web.RSA.Functions.CommonFunctions;
+import com.devstringx.utils.AssertionOperations;
+import com.devstringx.utils.ElementOperations;
+import com.devstringx.utils.FileOperations;
+
+
+
+
+public class FullAcess extends CommonFunctions{
+
+	public static String rndm = generateRandomString(3);
+	public static String new_email;
+
+	
+	/***
+	 * Check to see if Full Access user can edit a Simple Access User's Group that was created.
+	 * @throws InterruptedException 
+	 */
+	@Test
+	public static void FullAccess() throws InterruptedException
+	{
+          Logout();
+		//Login With SimpleUser Access
+		///Enter User name
+		TypeText("username_id",FileOperations.getValueFromPropertyFile(configFilePath,"simpleusername"));
+
+		//Enter PAssword
+		TypeText("password_id",FileOperations.getValueFromPropertyFile(configFilePath,"simplepassword"));
+
+		//click on signin button
+		Click("SignIn_xpath");
+
+		Click("CRMTab_xpath"); //click on CRM 
+		moveMouseAndClick("CRMTab_xpath","CRMContactTab_xpath"); // click on CRM contacts
+		waitUntilWebElementClickable("ContactMoreBtn_xpath", 120); //wait for 3 dots visible
+		Thread.sleep(1000);
+		Click("ContactMoreBtn_xpath"); // Click on the 3 vertical dots
+
+		Click("moreContactGroups_xpath");
+		Click("addGroupBtn_xpath");
+		
+		waitUntilWebElementVisible("groupName_xpath", 120);
+		TypeText("groupName_xpath","GroupA"+rndm);
+		Click("addSourceSaveBtn_id");
+
+		Thread.sleep(1000);
+		//Logout
+		Click("simpleUserProfileBtn_xpath");
+		Click("SignoutBtn_xpath");
+		waitUntilWebElementVisible("SignIn_xpath",120);
+
+		//Login With Full User Access
+		///Enter User name
+		TypeText("username_id",FileOperations.getValueFromPropertyFile(configFilePath,"username"));
+
+		//Enter PAssword
+		TypeText("password_id",FileOperations.getValueFromPropertyFile(configFilePath,"password"));
+
+		//click on sigin button
+		Click("SignIn_xpath");
+
+		moveMouseAndClick("CRMTab_xpath","CRMContactTab_xpath"); // click on CRM contacts
+		waitUntilWebElementClickable("ContactMoreBtn_xpath", 120); //wait for 3 dots visible
+		Click("ContactMoreBtn_xpath"); // Click on the 3 vertical dots
+
+		Click("moreContactGroups_xpath");
+
+		Click("firstRowGroupMoreBtn_xpath");
+		Click("firstRowEditBtn_xpath");
+		waitUntilWebElementVisible("editGroupNameinput_xpath", 120);
+		TypeText("editGroupNameinput_xpath","GroupAB"+rndm);
+		Click("updateGroupBtn_id");
+		Thread.sleep(2000);
+		
+		refreshPage();
+        waitUntilWebElementVisible("firstGroupName_xpath", 120);
+		String firstgroupname = getText("firstGroupName_xpath");
+		AssertionOperations.verifyStringsEquality(firstgroupname,"GroupAB"+rndm);
+
+
+		//Logout
+		Click("ProfileImg_xpath");
+		Click("SignoutBtn_xpath");
+		waitUntilWebElementVisible("SignIn_xpath",120);
+
+		//Login With SimpleUser Access
+		///Enter User name
+		TypeText("username_id",FileOperations.getValueFromPropertyFile(configFilePath,"simpleusername"));
+
+		//Enter PAssword
+		TypeText("password_id",FileOperations.getValueFromPropertyFile(configFilePath,"simplepassword"));
+
+		//click on signin button
+		Click("SignIn_xpath");
+
+
+		Click("CRMTab_xpath"); //click on CRM 
+		moveMouseAndClick("CRMTab_xpath","CRMContactTab_xpath"); // click on CRM contacts
+		waitUntilWebElementClickable("ContactMoreBtn_xpath", 120); //wait for 3 dots visible
+		Click("ContactMoreBtn_xpath"); // Click on the 3 vertical dots
+
+		Click("moreContactGroups_xpath");
+        waitUntilWebElementVisible("firstGroupName_xpath", 120);
+		String  firstgroupname2 = getText("firstGroupName_xpath");
+		AssertionOperations.verifyStringsEquality(firstgroupname2,"GroupAB"+rndm);
+	}
+	
+
+}

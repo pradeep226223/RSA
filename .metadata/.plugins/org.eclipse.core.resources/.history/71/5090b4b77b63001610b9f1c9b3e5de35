@@ -1,0 +1,38 @@
+#browser name
+browserName = chrome
+
+
+#Timeout settings
+pageLoadTimeout=120
+elementLoadTimeout=120
+elementWaitTime=1000
+
+
+#================
+#Application Url
+baseUrl = http://rsa.myprodesigns.net/en/
+#baseUrl = http://rsa.myprodesigns.net/fr/
+
+#credentials
+username=gaurav.singh@devstringx.com
+password=Sun9Dsrx8LXq6tjoiPZUMa6s8U5wd6zX
+
+simpleusername = gaurav.singh2@devstringx.com
+simplepassword = Sun9Dsrx8LXq6tjoiPZUMa6s8U5wd6zX
+
+fullacessusername = gaurav.singh3@devstringx.com
+fullacesspassword = Sun9Dsrx8LXq6tjoiPZUMa6s8U5wd6zX
+
+gmailusername = testingtiet@gmail.com
+gmailpass = testing@123
+gmailsearchvalue = gaurav.singh@devstringx.com
+
+rsusername = kunal@autotesting1.com
+rsuserpass = CzUwiIN7hpz6EzXjVRa
+rsserver = secure.emailsrvr.com
+rsport = 587
+
+
+
+
+

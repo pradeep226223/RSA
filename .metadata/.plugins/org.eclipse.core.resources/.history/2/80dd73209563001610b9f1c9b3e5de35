@@ -1,0 +1,51 @@
+package com.devstringx.tests.web.RSA;
+
+import org.openqa.selenium.By;
+import org.testng.annotations.Test;
+
+import com.devstringx.utils.ElementOperations;
+
+public class VeifyWithoutLogin extends ElementOperations{
+	
+	public static String rndm= ElementOperations.generateRandomAlphaNumeric(3);
+
+	@Test
+	public static void SignUp() throws InterruptedException{
+		//Open Home Page Without Login
+	    Click("SignUpButtonOnHomePage_xpath");//click on signup button
+		Thread.sleep(3000);
+		TypeText("FirstName_Xpath","Test"+rndm);//enter first name
+		
+		TypeText("LastName_Xpath","TT");//enter last name
+		
+		TypeText("Email_Xpath","email"+rndm+"@gmail.com");//email id
+		
+		TypeText("Password_xpath","test123!");//PWD
+		
+		Click("RadioButtonMale_Xpath");//Click radio button
+		
+		Click("TermsConditions_Xpath");//click on terms and conditions
+		Thread.sleep(2000);
+	    //Click("JoinButton_xpath");//Click Join button
+		Click("SignupCloseButton_xpath");//close signup pop
+	}
+	@Test
+	public static void VerifySearch() throws InterruptedException{
+		//Open Home Page Without Login
+		waitUntilWebElementVisible("FromAddress_Xpath",120);
+		int currentmothdate=23;
+		TypeText("FromAddress_Xapth","sector 50");//send text on from address
+		Thread.sleep(2000);
+		getWebDriver().findElement(By.xpath("//div[@class='pac-container pac-logo']/div[1]"));//Click on dropdown first value
+        TypeText("ToAddress_Xpath","setor 64");//send text on to address
+        Thread.sleep(2000);
+        getWebDriver().findElement(By.xpath("//div[@class='pac-container pac-logo']/div[1]")).click();//Click on dropdown first value
+        Thread.sleep(2000);
+        Click("CalenderIcon_Xpath");//Click on Date Icon
+        getWebDriver().findElement(By.xpath("//table[@class=' table-condensed']//tr//td[text()='"+currentmothdate+"' and @class='day']")).click();//Click on date
+        Click("SearchButton_Xpath");//Click on search button
+        
+		
+	}
+
+}

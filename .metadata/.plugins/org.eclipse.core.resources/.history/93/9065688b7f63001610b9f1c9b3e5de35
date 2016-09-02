@@ -1,0 +1,153 @@
+package com.devstringx.tests.web.RSALogin;
+
+
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
+import com.devstringx.tests.web.RSA.Functions.CommonFunctions;
+import com.devstringx.utils.AssertionOperations;
+import com.devstringx.utils.ExtentReporterNG;
+import com.devstringx.utils.FileOperations;
+
+public class DealDetailPage_Activity extends CommonFunctions{
+
+
+	/***
+	 * Check if the default tab getting selected on clicking + ACTIVITY button is add Note
+	 * @throws InterruptedException 
+	 */
+	@Test(priority=1)
+	public static void checkdefaultTab() throws InterruptedException
+	{
+
+		String url = FileOperations.getValueFromPropertyFile(configFilePath, "baseUrl");
+		getWebDriver().navigate().to(url + "/crm/deals/list_deals"); // Need to look
+		Thread.sleep(1000);
+		waitUntilWebElementVisible("firstRowDealName_xpath", 120);
+
+		Click("firstRowDealName_xpath");
+		Thread.sleep(1000);
+		waitUntilWebElementClickable("dealActivityTab_xpath", 120);
+		Click("dealActivityTab_xpath");
+
+		AssertionOperations.verifyElementDisplayed("dealActivityactiveTab_xpath");
+		Thread.sleep(1000);
+
+
+		Click("cancelBtn_xpath");
+		Thread.sleep(1000);
+
+	}
+
+	@Test(priority=2)
+	public static void checkdefaultEmailTab() throws InterruptedException
+	{
+
+		String url = FileOperations.getValueFromPropertyFile(configFilePath, "baseUrl");
+		getWebDriver().navigate().to(url + "/crm/deals/list_deals"); // Need to look
+		Thread.sleep(1000);
+		waitUntilWebElementVisible("firstRowDealName_xpath", 120);
+
+		Click("firstRowDealName_xpath");
+		Thread.sleep(1000);
+
+		clickEmailIconFromActionBar();
+		Thread.sleep(2000);
+		waitUntilWebElementVisible("emailSubjectTextField_xpath", 120);
+		AssertionOperations.verifyElementDisplayed("activeEmailtab_xpath");
+
+
+		//Click("emailFormCancelBtn_xpath");
+		Thread.sleep(1000);
+
+
+
+	}
+
+	@Test(priority=3)
+	public static void checkSavedResponseInBody() throws InterruptedException
+	{
+
+		String url = FileOperations.getValueFromPropertyFile(configFilePath, "baseUrl");
+		getWebDriver().navigate().to(url + "/crm/deals/list_deals"); // Need to look
+		Thread.sleep(1000);
+
+		waitUntilWebElementVisible("firstRowDealName_xpath", 120);
+		Click("firstRowDealName_xpath");
+		Thread.sleep(1000);
+
+		clickEmailIconFromActionBar();
+		Thread.sleep(3000);
+
+		waitUntilWebElementVisible("emailSubjectTextField_xpath", 120);
+
+		Click("savedResponseDropdown_xpath");
+		Thread.sleep(1000);
+		Click("existResponse_xpath");
+		Thread.sleep(1000);
+		AssertionOperations.verifyElementDisplayed("existresponseEmailBody_xpath");
+
+		Click("emailFormCancelBtn_xpath");
+		Thread.sleep(1000);
+
+
+	}
+
+	@Test(priority=4)
+	public static void verifyClearBtn() throws InterruptedException
+	{
+
+		String url = FileOperations.getValueFromPropertyFile(configFilePath, "baseUrl");
+		getWebDriver().navigate().to(url + "/crm/deals/list_deals"); // Need to look
+		Thread.sleep(1000);
+		waitUntilWebElementVisible("firstRowDealName_xpath", 120);
+
+		Click("firstRowDealName_xpath");
+		Thread.sleep(1000);
+
+		clickEmailIconFromActionBar();
+		Thread.sleep(3000);
+
+		waitUntilWebElementVisible("emailSubjectTextField_xpath", 120);
+		Click("savedResponseDropdown_xpath");
+		Click("existResponse_xpath");
+		Thread.sleep(1000);
+		AssertionOperations.verifyElementDisplayed("existresponseEmailBody_xpath");
+
+		Click("clearBtn_xpath");
+		Thread.sleep(1000);
+		AssertionOperations.verifyElementNotDisplayed("existresponseEmailBody_xpath");
+
+		Click("emailFormCancelBtn_xpath");
+		Thread.sleep(1000);
+
+	}
+
+	@Test(priority=5)
+	public static void verifyEmailcarbonCopy() throws InterruptedException
+	{
+		String url = FileOperations.getValueFromPropertyFile(configFilePath, "baseUrl");
+		getWebDriver().navigate().to(url + "/crm/deals/list_deals"); // Need to look
+		Thread.sleep(1000);
+		waitUntilWebElementVisible("firstRowDealName_xpath", 120);
+
+		Click("firstRowDealName_xpath");
+		Thread.sleep(3000);
+
+		clickEmailIconFromActionBar();
+		Thread.sleep(3000);
+
+		waitUntilWebElementVisible("emailSubjectTextField_xpath", 120);
+		Click("emailCClink_xpath");
+		Thread.sleep(1000);
+		AssertionOperations.verifyElementDisplayed("emailCCTxtField_xpath");
+		Click("emailBCClink_xpath");
+		Thread.sleep(1000);
+		AssertionOperations.verifyElementDisplayed("emailBCCTxtField_xpath");
+
+		Click("emailFormCancelBtn_xpath");
+		Thread.sleep(1000);
+
+	}
+
+}

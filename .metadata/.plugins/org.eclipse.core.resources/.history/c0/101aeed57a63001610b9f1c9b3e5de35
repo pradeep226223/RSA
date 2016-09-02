@@ -1,0 +1,192 @@
+package com.devstringx.tests.web.RSA;
+
+import java.io.IOException;
+import java.util.List;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebElement;
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
+import com.devstringx.tests.web.Tieit.Functions.CommonFunctions;
+import com.devstringx.utils.AssertionOperations;
+import com.devstringx.utils.FileOperations;
+
+public class DealDetailPage extends CommonFunctions{
+	public static String rndm = generateRandomAlphaNumeric(2);
+
+	public static void DealSelect() throws InterruptedException{
+
+		//moveMouseAndClick("CRMTab_xpath","CRMDEALTab_XPath"); not working
+		String url = FileOperations.getValueFromPropertyFile(configFilePath, "baseUrl");
+		getWebDriver().navigate().to(url + "crm/deals/list_deals"); // Need to look
+		Thread.sleep(5000);
+		//SelectElementFromColumns("AllContacts_XPath","pradeep226223@gamil.com");
+		Click("select2itemfromdealdetail_xpath");  //select the second number Deal
+		waitUntilWebElementClickable("ActivityDeal_XPath",120);
+		Click("ActivityDeal_XPath");
+	}
+
+	public static void BoldFontChecker() throws InterruptedException{
+		DealSelect();
+     	waitUntilWebElementClickable("PopupTextBox_Xpath",120);
+		//Click("PopupTextBox_Xpath");
+		TypeText("PopupTextBox_Xpath","pradeep");
+		getWebDriver().findElement(By.xpath("//form[@id='noteform']//div[@class='fr-element fr-view']")).sendKeys(Keys.chord(Keys.CONTROL,"a"));
+		waitUntilWebElementClickable("BoldButton_XPath",120);
+		Click("BoldButton_XPath");
+		Thread.sleep(2000);
+		String s=getTagName("AfterBold_Xpath","strong");
+		AssertionOperations.verifyStringsEquality(s, "strong");
+		Thread.sleep(3000);
+		Click("CancelPOP_Xpath");
+	}
+
+	public static void ItalicFontChecker() throws Exception{
+		DealSelect();		
+		waitUntilWebElementClickable("PopupTextBox_Xpath",120);
+		//Click("PopupTextBox_Xpath");
+		TypeText("PopupTextBox_Xpath","pradeep");
+		getWebDriver().findElement(By.xpath("//form[@id='noteform']//div[@class='fr-element fr-view']")).sendKeys(Keys.chord(Keys.CONTROL,"a"));
+		waitUntilWebElementClickable("ItalicButton_Xpath",120);
+		Click("ItalicButton_Xpath");
+		Thread.sleep(2000);
+		String s=getTagName("AfterItalic_Xpath","em");
+		AssertionOperations.verifyStringsEquality(s, "em");
+		Thread.sleep(3000);
+		Click("CancelPOP_Xpath");
+	}
+
+	public static void UnderlineFontChecker() throws Exception{
+		DealSelect();
+		ClickandHold("UnderLineButton_Xpath");
+		waitUntilWebElementClickable("PopupTextBox_Xpath",120);
+		//Click("PopupTextBox_Xpath");
+		TypeText("PopupTextBox_Xpath","pradeep");
+		getWebDriver().findElement(By.xpath("//form[@id='noteform']//div[@class='fr-element fr-view']")).sendKeys(Keys.chord(Keys.CONTROL,"a"));
+		waitUntilWebElementClickable("UnderLineButton_Xpath",120);
+		Click("UnderLineButton_Xpath");
+		String s=getTagName("AfterUnderLine_Xpath","u");
+		AssertionOperations.verifyStringsEquality(s, "u");
+		Thread.sleep(3000);
+		Click("CancelPOP_Xpath");
+
+	}
+
+	public static void CancelButtonChecker() throws InterruptedException{
+		DealSelect();
+
+		waitUntilWebElementClickable("PopupTextBox_Xpath",120);
+		TypeText("PopupTextBox_Xpath","pradeep kumar");
+		Thread.sleep(5000);
+		Click("CancelPOP_Xpath");
+	}
+
+	 public static void verifyAddNote () throws InterruptedException{
+		    DealSelect();Thread.sleep(3000);
+	     	waitUntilWebElementClickable("PopupTextBox_Xpath",120);
+	     	Thread.sleep(3000);
+			//Click("PopupTextBox_Xpath");
+	     	String text="Test"+rndm;
+	     	Thread.sleep(3000);
+			TypeText("PopupTextBox_Xpath",text);
+			Thread.sleep(4000);
+			Click("SaveButtonBottom_Xpath");
+			waitUntilWebElementClickable("DealConatactId_Xpath",120);
+			Thread.sleep(2000);
+			Click("DealConatactId_Xpath");
+			Thread.sleep(8000);
+			Boolean t= verifyText("//ul[@class='timeline-tree']//li[1]",text);
+			Assert.assertTrue(t);
+			Thread.sleep(2000);
+			 t= verifyText("//ul[@class='timeline-tree']//li[1]//strong","Note");
+			Assert.assertTrue(t);
+	 }
+	
+	 public static void verifyPinnedNote() throws InterruptedException{
+		 DealSelect();Thread.sleep(3000);
+	     	waitUntilWebElementClickable("PopupTextBox_Xpath",120);
+	     	Thread.sleep(3000);
+			//Click("PopupTextBox_Xpath");
+	     	String text="Test"+rndm;
+	     	Thread.sleep(3000);
+			TypeText("PopupTextBox_Xpath",text);
+			Thread.sleep(4000);
+			Click("PinButton_XPath");
+			Thread.sleep(3000);
+			Click("SaveButtonBottom_Xpath");
+			waitUntilWebElementClickable("DealConatactId_Xpath",120);
+			Thread.sleep(2000);
+			Click("DealConatactId_Xpath");
+			Thread.sleep(8000);
+			Boolean t= verifyText("//ul[@class='timeline-tree']//li[1]//strong","Pinned Note");
+			Assert.assertTrue(t);
+	 }
+	 public static void verifyPinnedNoteDispalyedWithnormalNote(){}
+	 
+	
+	public static void VerifyUploadFile() throws InterruptedException{
+		DealSelect();
+		Thread.sleep(5000);
+		//waitUntilWebElementClickable("AttachementButtonBottom_XPath",120);
+		waitUntilWebElementClickable("PopupTextBox_Xpath",120);
+		Thread.sleep(2000);
+		TypeText("PopupTextBox_Xpath","pradeep");
+		getWebDriver().findElement(By.xpath("//div[@id='mulitple-attach-Addnote']//input[@type='file']")).sendKeys("G:\\Data_Soniya\\06072016\\papaproperty.txt");
+		Thread.sleep(2000);
+		getWebDriver().findElement(By.xpath("//div[@id='mulitple-attach-Addnote']//input[@type='file']")).sendKeys("G:\\Data_Soniya\\06072016\\CRM_TEST_CASES.txt");
+		//getWebDriver().findElement(By.xpath("//div[@id='mulitple-attach-Addnote']//input[@type='file']")).sendKeys("G:\\Data_Soniya\\06072016\\Locator_Deal_ADDNote.txt");
+		Thread.sleep(10000);
+		Click("SaveButtonBottom_Xpath");
+		String s=getText("errorMessage_xpath");
+		System.out.println(s);
+		AssertionOperations.verifyStringsEquality(s, "The new Note has been successfully added.");
+		Thread.sleep(5000);
+		//waitUntilWebElementClickable("DealConatactId_Xpath",120);
+		Click("DealConatactId_Xpath");
+		Thread.sleep(5000);
+		getWebDriver().findElement(By.xpath("//ul[@class='timeline-tree']//li[1]//p[@class='m-b-5'][1]")).click();
+		Thread.sleep(3000);
+		Boolean t= verifyText("//ul[@class='timeline-tree']//li[1]","papaproperty.txt");
+		Assert.assertTrue(t);
+		Thread.sleep(3000);
+		t= verifyText("//ul[@class='timeline-tree']//li[1]","papaproperty.txt");
+		Assert.assertTrue(t);
+		Thread.sleep(3000);
+		t= verifyText("//ul[@class='timeline-tree']//li[1]","pradeep");
+		Assert.assertTrue(t);
+	}
+	public static boolean verifyText(String element ,String text){
+		List<WebElement> elements=getWebDriver().findElements(By.xpath(element));
+		if(elements.size()!=0)
+		{
+			for(WebElement t:elements){
+				String s=t.getText();
+				if(s.contains(text)){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	public static void verifyInvalidFile() throws InterruptedException{
+		DealSelect();
+		Thread.sleep(5000);
+		waitUntilWebElementClickable("PopupTextBox_Xpath",120);
+		getWebDriver().findElement(By.xpath("//div[@id='mulitple-attach-Addnote']//input[@type='file']")).sendKeys("G:\\Data_Soniya\\06072016\\e08");
+		Thread.sleep(4000);
+		Click("SaveButtonBottom_Xpath");
+		Thread.sleep(2000);
+		String s=getText("errorMessage_xpath");
+		System.out.println(s);
+		AssertionOperations.verifyStringsEquality(s, "Please fill the fields properly.");
+		Thread.sleep(5000);
+		Click("CancelPOP_Xpath");
+	}
+	
+}
+
+
+

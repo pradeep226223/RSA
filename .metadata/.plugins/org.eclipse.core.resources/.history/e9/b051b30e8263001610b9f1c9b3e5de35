@@ -1,0 +1,32 @@
+package com.devstringx.tests.web.RSA;
+
+import com.devstringx.tests.web.RSA.Functions.CommonFunctions;
+
+public class SettingTab extends CommonFunctions{
+	@Test
+	public static void VerifyAllTabsInSettings() throws InterruptedException
+	{	
+	
+	waitUntilWebElementClickable("ProfileIcon_xpath",120);
+	Thread.sleep(2000);
+    Click("ProfileIcon_xpath");//click on profile icon
+	Thread.sleep(2000);
+	Click("Settings_Xpath");//Setting Tab
+	waitUntilWebElementClickable("personalInfo_xpath",120);
+	Thread.sleep(2000);
+	Click("personalInfo_xpath");//personal info
+	Thread.sleep(3000);
+	Click("ChangePassword_xpath");//change password
+	Thread.sleep(3000);
+	
+	Click("Membership_xpath");//Membership
+	Thread.sleep(3000);
+	
+	Click("Authentication_xpath");//Authentication
+	Thread.sleep(3000);
+	Click("VehicleSettings_xpath");//Vehicale settings
+	Thread.sleep(3000);
+	Click("Preferences_xpath");//preference
+	}
+
+}

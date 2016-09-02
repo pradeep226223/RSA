@@ -1,0 +1,31 @@
+package com.devstringx.tests.web.RSA;
+
+import org.testng.annotations.Test;
+
+import com.devstringx.utils.ElementOperations;
+
+public class VerifySignUpPage extends ElementOperations{
+	
+	public static String rndm= ElementOperations.generateRandomAlphaNumeric(3);
+
+	@Test
+	public static void SignUp() throws InterruptedException{
+	    Click("SignUpButtonOnHomePage_xpath");//click on signup button
+		Thread.sleep(3000);
+		TypeText("FirstName_Xpath","Test"+rndm);//enter first name
+		Thread.sleep(2000);
+		TypeText("LastName_Xpath","TT");//enter last name
+		Thread.sleep(2000);
+		TypeText("Email_Xpath","email"+rndm+"@gmail.com");//email id
+		Thread.sleep(2000);
+		TypeText("Email_Xpath","test123!");//PWD
+		Thread.sleep(2000);
+		Click("RadioButtonMale_Xpath");//Click radio button
+		Thread.sleep(2000);
+		Click("TermsConditions_Xpath");//click on terms and conditions
+		Thread.sleep(2000);
+	    //Click("JoinButton_xpath");//Click Join button
+		Click("SignupCloseButton_xpath");//close signup pop
+	}
+
+}

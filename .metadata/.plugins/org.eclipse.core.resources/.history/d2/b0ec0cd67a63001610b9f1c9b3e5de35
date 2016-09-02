@@ -1,0 +1,174 @@
+package com.devstringx.tests.web.RSA;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
+import org.testng.asserts.Assertion;
+
+import com.devstringx.tests.web.Tieit.Functions.CommonFunctions;
+import com.devstringx.utils.AssertionOperations;
+import com.devstringx.utils.ElementOperations;
+import com.devstringx.utils.FileOperations;
+
+public class SourceList extends CommonFunctions{
+
+	public static int rndm = randNum();
+	
+	
+	/**
+      Source List > Add Custom Source
+       @throws InterruptedException 
+	 */
+
+	@Test(priority=1)
+	public static void addCustomSource() throws InterruptedException
+	{
+		
+		//Go to contact listing page
+		Click("CRMTab_xpath"); //click on CRM 
+		moveMouseAndClick("CRMTab_xpath","CRMContactTab_xpath"); // click on CRM contacts
+		waitUntilWebElementClickable("ContactMoreBtn_xpath", 120); //wait for 3 dots visible
+		Thread.sleep(1000);
+		Click("ContactMoreBtn_xpath"); // Click on the 3 vertical dots
+		Click("SourceListBtn_xpath"); //select source list
+        Thread.sleep(1000);
+		waitUntilWebElementVisible("addContactSourceBtn_xpath",120);
+		Click("addContactSourceBtn_xpath"); //Click the + CONTACT SOURCE button (Green button in top right)
+		
+		waitUntilWebElementVisible("addSourcePopupHeader_xpath",120); //wait for add source page visible
+
+		//7) Fill in the corresponding Popup (Source Name is the required field)
+		TypeText("sourceInputTxtField_id", "CustomSource"+rndm); //For test purposes:Source Name: Test 101
+		Thread.sleep(1000);
+		Click("selectPiplene_id"); //open pipeline dropdown
+		Click("pipelinefirstOption_xpath"); //select pipeline
+		Thread.sleep(1000);
+		Click("selectAssignee_id"); //open assignee
+		Click("assigneefirstOption_xpath"); //select assignee
+		Click("addSourceSaveBtn_id"); //click on save button
+
+
+		AssertionOperations.verifyElementDisplayed("successMessage_xpath");
+		Thread.sleep(1000);
+		
+
+}
+
+	/***
+	 * Source List > Add Custom Source by giving name of default Source
+	 * @throws InterruptedException 
+	 */
+	
+	@Test(priority=2)
+	public static void addCustomSourcewithDefaultSourceName() throws InterruptedException
+	{
+		//Go to contact listing page
+		Click("CRMTab_xpath"); //click on CRM 
+		moveMouseAndClick("CRMTab_xpath","CRMContactTab_xpath"); // click on CRM contacts
+		Thread.sleep(1000);
+		waitUntilWebElementClickable("ContactMoreBtn_xpath", 120); //wait for 3 dots visible
+		Click("ContactMoreBtn_xpath"); // Click on the 3 vertical dots
+		Click("SourceListBtn_xpath"); //select source list
+
+		Thread.sleep(1000);
+		waitUntilWebElementVisible("addContactSourceBtn_xpath",120);
+		Click("addContactSourceBtn_xpath"); //Click the + CONTACT SOURCE button (Green button in top right)
+		
+		waitUntilWebElementVisible("addSourcePopupHeader_xpath",120); //wait for add source page visible
+		
+		//Enter source name as any of the default sourcein the application (Email, Invoice...)"
+	    TypeText("sourceInputTxtField_id", "Invoice"); 
+	    Click("addSourceSaveBtn_id"); //click on save button
+	    
+	    String Actualerror = getText("Validationerrorpopupmessage_xpath");
+	    
+	    AssertionOperations.verifyStringsEquality(Actualerror, "Source with same name already Exist."); //it will fail on production due to bug
+	    Click("cancelBtn_xpath");
+       Thread.sleep(1000);
+		
+	}
+	
+	/***
+	 * Source List > Delete Custom Source (One at a time)
+	 * @throws InterruptedException 
+	 */
+	
+	@Test(priority=3)
+	 public static void deleteSingleCustomSource() throws InterruptedException
+	 {
+		 
+		//Go to contact listing page
+			Click("CRMTab_xpath"); //click on CRM 
+			moveMouseAndClick("CRMTab_xpath","CRMContactTab_xpath"); // click on CRM contacts
+			waitUntilWebElementClickable("ContactMoreBtn_xpath", 120); //wait for 3 dots visible
+			Click("ContactMoreBtn_xpath"); // Click on the 3 vertical dots
+			Click("SourceListBtn_xpath"); //select source list
+
+			waitUntilWebElementVisible("addContactSourceBtn_xpath",120);
+			Thread.sleep(1000);
+			/**Precondition -create source**/
+			Click("addContactSourceBtn_xpath"); //Click the + CONTACT SOURCE button (Green button in top right)
+			
+			waitUntilWebElementVisible("addSourcePopupHeader_xpath",120); //wait for add source page visible
+
+			//7) Fill in the corresponding Popup (Source Name is the required field)
+			TypeText("sourceInputTxtField_id", "CustomSource"); //For test purposes:Source Name: Test 101
+			
+			Click("addSourceSaveBtn_id"); //click on save button
+			waitUntilWebElementVisible("successMessage_xpath", 120); //wait
+			Thread.sleep(2000);
+			
+
+			
+		// Click on 3 vertical dots corresponding to source in source listing page
+		 Click("CustomSource3Dots_xpath");
+		
+		 // Click on Delete option"
+		 Click("CustomSourceDeletebtn_xpath");
+		 waitUntilWebElementClickable("sourcePopupDeletebtn_xpath", 120);
+		 Click("sourcePopupDeletebtn_xpath");
+		 
+		 waitUntilWebElementVisible("Validationerrorpopupmessage_xpath", 120);
+		 String actualerror = getText("Validationerrorpopupmessage_xpath");
+		 AssertionOperations.verifyStringsEquality(actualerror, "1Source Deleted Successfully.");
+		 
+		 Thread.sleep(1000);
+	 }
+	 
+	 /***
+	  * Source List > Delete Custom Source (More than one at a time)
+	 * @throws InterruptedException 
+	  */
+	 
+	@Test(priority=4)
+	 public static void deletemultiSource() throws InterruptedException
+	 {
+		//Go to contact listing page
+			Click("CRMTab_xpath"); //click on CRM 
+			moveMouseAndClick("CRMTab_xpath","CRMContactTab_xpath"); // click on CRM contacts
+			waitUntilWebElementClickable("ContactMoreBtn_xpath", 120); //wait for 3 dots visible
+			Click("ContactMoreBtn_xpath"); // Click on the 3 vertical dots
+
+			Click("SourceListBtn_xpath"); //select source list
+			Thread.sleep(1000);
+			waitUntilWebElementVisible("addContactSourceBtn_xpath",120);
+			Thread.sleep(2000);
+			
+			//7) Fill in the corresponding Popup (Source Name is the required field)
+			
+			Click("firstSourcecheckbox_xpath");
+			Click("secondSourcheckbox_xpath");
+			
+			Click("sourcebulkDeleteBtn_xpath");
+			waitUntilWebElementClickable("sourcePopupDeletebtn_xpath", 120);
+			 //4. Click on Delete in confirmation pop up"
+			Click("sourcePopupDeletebtn_xpath");
+		 
+			waitUntilWebElementVisible("Validationerrorpopupmessage_xpath", 120);
+			String actualerror = getText("Validationerrorpopupmessage_xpath");
+		    AssertionOperations.verifyStringsEquality(actualerror, "2Source Deleted Successfully.");
+		    
+		    Thread.sleep(1000);
+	 }
+	 
+	
+}

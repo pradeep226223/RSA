@@ -1,0 +1,135 @@
+package com.devstringx.tests.web.RSA;
+
+import org.openqa.selenium.By;
+import org.testng.Assert;
+import org.testng.annotations.Test;
+import org.testng.asserts.Assertion;
+
+import com.devstringx.tests.web.RSA.Functions.CommonFunctions;
+import com.devstringx.utils.AssertionOperations;
+import com.devstringx.utils.ExtentReporterNG;
+import com.devstringx.utils.FileOperations;
+
+/*******************************************************
+ * CRM DEALS
+ * @author Gaurav Singh
+ *
+ */
+public class DealForFullAccessUser extends CommonFunctions{
+	static String rndm = generateRandomAlphaNumeric(3);
+	static String dealName;
+	/***
+	 * Add new Deal for Existing contact
+	 * @throws InterruptedException 
+	 */
+	@Test(priority=1)
+	public static void addNewDealForExistingContact() throws InterruptedException
+	{
+		String url = FileOperations.getValueFromPropertyFile(configFilePath, "baseUrl");
+		getWebDriver().navigate().to(url + "/crm/deals/list_deals"); // Need to look
+		Thread.sleep(1000);
+
+		//Click on + ADD deal button at top right corner
+		openAddDealWindow();
+
+		//Select the desired contact from contact person field
+		TypeText("dealContactPerson_xpath","DealContact");
+		deleteSinglechar("sourceInputBox_id");
+		Thread.sleep(1000);
+		Click("existingContactListOption_xpath");
+
+		dealName = "TestDealForExisting"+rndm;
+		//enter RandomUnique deal name
+		TypeText("dealNameTextField_xpath",dealName);
+		// Select the Assignee
+		Click("dealAssigneedropdown_xpath");
+		Click("fullaccessUserAssignee1_xpath");
+
+		//Select the Pipeline
+		Click("dealPipelineDropdown_xpath");
+		Click("dealPipelineFirstOption_xpath");
+		Thread.sleep(2000);
+		//Click on Submit Button
+		submitDeal();
+
+		//A new deal should be created and control should be redirected to deal detail page. 
+
+		String actualSuccessMessage = getText("ValidationPopupmessage_xpath");
+		AssertionOperations.verifyStringsEquality(actualSuccessMessage,"Deal added successfully.");
+		Thread.sleep(2000);
+		String dealDetailTitle = getTitle();
+		AssertionOperations.verifyStringsEquality(dealDetailTitle,"TieiT- Deals | Deal Details");
+
+		//The newly created deal should be accessible to all full access users in the site
+
+		Logout();
+		loginAsfullUserAccess();
+		getWebDriver().navigate().to(url + "/crm/deals/list_deals"); // Need to look
+		Thread.sleep(1000);
+
+		int count = getWebDriver().findElements(By.xpath("//div[@id='dealsGrid']/div/table/tbody/tr/td/a[text()='"+dealName+"']")).size();
+		if(count>=1){
+			Assert.assertTrue(true);
+		}
+		else
+		{
+			Assert.fail();
+		}
+
+
+		//logout and login as previous Full Access user
+		Logout();
+		Login();
+	}
+
+	/***
+	 * Check if a Full access user is able to Delete a deal in the site
+	 * @throws InterruptedException 
+	 */
+	
+	@Test(priority=3)
+	public static void deleteDealonFullAccessUser() throws InterruptedException
+	{
+		String url = FileOperations.getValueFromPropertyFile(configFilePath, "baseUrl");
+		getWebDriver().navigate().to(url + "/crm/deals/list_deals"); // Need to look
+		Thread.sleep(1000);
+
+		//Click on + ADD deal button at top right corner
+		openAddDealWindow();
+
+		//Select the desired contact from contact person field
+		TypeText("dealContactPerson_xpath","DealContact");
+		deleteSinglechar("sourceInputBox_id");
+		Thread.sleep(1000);
+		Click("existingContactListOption_xpath");
+
+		dealName = "DealOfUser"+rndm;
+		//enter RandomUnique deal name
+		TypeText("dealNameTextField_xpath",dealName);
+		// Select the Assignee
+		Click("dealAssigneedropdown_xpath");
+		Click("simpleUserAssignee_xpath");
+
+		//Select the Pipeline
+		Click("dealPipelineDropdown_xpath");
+		Click("dealPipelineFirstOption_xpath");
+		Thread.sleep(1000);
+		//Click on Submit Button
+		submitDeal();
+		Thread.sleep(3000);
+		getWebDriver().navigate().to(url + "/crm/deals/list_deals"); // Need to look
+		Thread.sleep(1000);
+
+		//Click on Delete button corresponding to the deal that needs to be deleted
+		Click("firstRowdeleteBtn_xpath");
+		waitUntilWebElementClickable("popUpDeleteBtn_xpath", 120);
+		Click("popUpDeleteBtn_xpath");
+		String deleteSuccessfullmsg = getText("ValidationPopupmessage_xpath");
+		AssertionOperations.verifyStringsEquality(deleteSuccessfullmsg,"Deal deleted successfully.");
+
+
+	}
+	
+	
+
+}

@@ -1,0 +1,349 @@
+package com.devstringx.baseclass;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+
+import io.appium.java_client.MobileBy;
+
+
+import org.apache.log4j.Logger;
+import org.junit.Assert;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.testng.ITestContext;
+import org.testng.annotations.AfterSuite;
+import org.testng.annotations.BeforeSuite;
+import org.testng.xml.XmlSuite;
+import com.devstringx.constants.Constants;
+import com.devstringx.utils.ElementOperations;
+import com.devstringx.utils.ExtentReporterNG;
+import com.devstringx.utils.FileOperations;
+
+
+
+public class BaseClass {
+
+	private static WebDriver webdriver = null;
+	public static String configFilePath = null;
+	public static String elementRepositoryFilePath = null;
+	public static String suiteFolder = null;
+	static Logger logger = Logger.getLogger(BaseClass.class);
+	public static String xmlFilePath = null;
+	public static String reportfilepath = null;
+	public static String detectedOS = null;
+
+
+	@BeforeSuite
+	public static void setUp(ITestContext testContxt) {
+		try{
+			System.out.println("setup started");
+			//XmlSuite suiteName = testContxt.getCurrentXmlTest().getSuite();
+			//int len = suiteName.getFileName().split("\\\\").length;
+			//suiteFolder = suiteName.getFileName().split("\\\\")[len-2];
+
+			suiteFolder = "web";
+
+			if (suiteFolder.equals("web")){
+				initializeWebBaseSettings();
+				initializeWebDriver();
+				ElementOperations.openApplicationUrl(FileOperations.getValueFromPropertyFile(configFilePath, "baseUrl"));
+			}
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			ExtentReporterNG.failurereason = e.getMessage();
+
+		}
+
+
+	}
+	public static String getOperatingSystemType() {
+	
+	      String OS = System.getProperty("os.name", "generic").toLowerCase();
+	      if ((OS.indexOf("mac") >= 0)) {
+	        detectedOS = "MacOS";
+	      } else if (OS.indexOf("win") >= 0) {
+	        detectedOS = "Windows";
+	      } else if (OS.indexOf("nux") >= 0) {
+	        detectedOS = "Linux";
+	      } else {
+	        detectedOS = "Other";
+	      }
+	      
+	      return detectedOS;
+	    }
+	public static void initializeWebDriver() {
+		logger.debug("entering method - initializeWebDriver");
+
+		setWebDriver(FileOperations.getValueFromPropertyFile(configFilePath, "browserName"));
+		ElementOperations.maximizeWindow();
+		ElementOperations.setGlobalTimeouts(Integer.parseInt(FileOperations.getValueFromPropertyFile(configFilePath, "pageLoadTimeout")),
+				Integer.parseInt(FileOperations.getValueFromPropertyFile(configFilePath, "elementLoadTimeout")));
+
+		logger.debug("existing method - initializeWebDriver");
+
+	}	
+	public static void setWebDriver(String browserName){
+		logger.debug("entering method - setWebDriver");
+		String osType = getOperatingSystemType();
+
+		if(browserName.equalsIgnoreCase("firefox") || browserName.equalsIgnoreCase("ff")){
+			webdriver = new FirefoxDriver();
+		} else if (browserName.equalsIgnoreCase("chrome") || browserName.equalsIgnoreCase("ch")){
+			if (osType.equals("Linux")){
+				System.setProperty("webdriver.chrome.driver", "src/../drivers/chromedriver");
+			} else {
+				System.setProperty("webdriver.chrome.driver", "src/../drivers/chromedriver.exe");
+			}
+			webdriver = new ChromeDriver();
+		} else if (browserName.equalsIgnoreCase("internet explorer") || browserName.equalsIgnoreCase("ie")) {
+			System.setProperty("webdriver.ie.driver", "src/../drivers/IEDriverServer.exe");
+			webdriver = new InternetExplorerDriver();
+		}
+
+		logger.debug("exiting method - setWebDriver");
+	}	
+
+	public static WebDriver getWebDriver() {
+		logger.debug("entering method - getWebDriver");
+		logger.debug("exiting method - getWebDriver");
+		return webdriver;
+	}	
+
+	public static void initializeWebBaseSettings(){
+		logger.debug("entering method - initializeWebBaseSettings");
+
+		setWebConfigFilePath();
+		setWebElementRepositoryFilePath();
+
+		logger.debug("exiting method - initializeWebBaseSettings");
+	}
+
+	public static void setWebConfigFilePath(){
+		logger.debug("entering method - setWebConfigFilePath");
+		configFilePath = Constants.CONFIG_WEB_FILE_PATH;
+		logger.debug("exiting method - setWebConfigFilePath");
+	}
+
+	public static void setWebElementRepositoryFilePath(){
+		logger.debug("entering method - setWebElementRepositoryFilePath");
+		elementRepositoryFilePath = Constants.ELEMENTREPOSITORY_WEB_FILE_PATH;
+		logger.debug("exiting method - setWebElementRepositoryFilePath");
+	}	
+
+	public static File screenshot()
+	{
+		if(suiteFolder.equals("web"))
+		{
+			File scrFile = ((TakesScreenshot)getWebDriver()).getScreenshotAs(OutputType.FILE);
+			return scrFile;
+		}
+		else
+		{
+			File scrFile=null;
+			return scrFile;
+		}
+	}
+
+	public static WebElement getElement(String elementName) {
+		String locatorValue = null;
+	    String [] locatorType = null;
+		WebElement element=null;
+		locatorValue = FileOperations.getValueFromPropertyFile(elementRepositoryFilePath, elementName);
+		if(elementName.contains("_"))
+		{
+			locatorType = elementName.split("_");	
+		}
+		else
+		{
+			ExtentReporterNG.failurereason = "locator type for "+elementName+" not found in elementrepository file";
+			Assert.fail();
+		}
+
+		if (locatorType[1].toLowerCase().equals("id")){
+			if(suiteFolder.equals("web"))
+			{
+				element = getWebDriver().findElement(MobileBy.id(locatorValue));
+			}
+
+		} else if (locatorType[1].toLowerCase().equals("name")){
+			if(suiteFolder.equals("web"))
+			{
+				element = getWebDriver().findElement(MobileBy.name(locatorValue));
+			}
+
+		}
+		else if (locatorType[1].toLowerCase().equals("AccessibilityId")){
+			if(suiteFolder.equals("web"))
+			{
+				element = getWebDriver().findElement(MobileBy.AccessibilityId(locatorValue));
+			}
+
+		} else if (locatorType[1].toLowerCase().equals("AndroidUIAutomator")){
+			if(suiteFolder.equals("web"))
+			{
+				element = getWebDriver().findElement(MobileBy.AndroidUIAutomator(locatorValue));
+			}
+
+		} else if (locatorType[1].toLowerCase().equals("IosUIAutomation")){
+			if(suiteFolder.equals("web"))
+			{
+				element = getWebDriver().findElement(MobileBy.IosUIAutomation(locatorValue));
+			}
+		} else if (locatorType[1].toLowerCase().equals("className")){
+			if(suiteFolder.equals("web"))
+			{
+				element = getWebDriver().findElement(MobileBy.className(locatorValue));
+			}
+
+		} else if (locatorType[1].toLowerCase().equals("cssSelector")){
+			if(suiteFolder.equals("web"))
+			{
+				element = getWebDriver().findElement(MobileBy.cssSelector(locatorValue));
+			}
+
+		} else if (locatorType[1].toLowerCase().equals("linkText")){
+			if(suiteFolder.equals("web"))
+			{
+				element = getWebDriver().findElement(MobileBy.linkText(locatorValue));
+			}
+
+		} else if (locatorType[1].toLowerCase().equals("partialLinkText")){
+			if(suiteFolder.equals("web"))
+			{
+				element = getWebDriver().findElement(MobileBy.partialLinkText(locatorValue));
+			}
+
+		} else if (locatorType[1].toLowerCase().equals("tagName")){
+			if(suiteFolder.equals("web"))
+			{				
+				element = getWebDriver().findElement(MobileBy.tagName(locatorValue));
+			}
+
+		} else if (locatorType[1].toLowerCase().equals("xpath")){
+
+			if(suiteFolder.equals("web"))
+			{
+				element = getWebDriver().findElement(MobileBy.xpath(locatorValue));
+			}
+		}
+		else
+		{
+			ExtentReporterNG.failurereason = "Locator Type [" +locatorType[1] +"] is not correct for element +[" +elementName +"]";
+			Assert.fail();
+		}
+		return element;
+	}
+
+	public static List<WebElement> getElements(String elementName) {
+
+
+		String locatorValue = null;
+		String [] locatorType = null;
+		List<WebElement> element = null;
+		
+		locatorValue = FileOperations.getValueFromPropertyFile(elementRepositoryFilePath, elementName);
+		if(elementName.contains("_"))
+		{
+			locatorType = elementName.split("_");	
+		}
+		else
+		{
+			ExtentReporterNG.failurereason = "locator type for "+elementName+" not found in elementrepository file";
+			Assert.fail();
+		}
+
+		if (locatorType[1].toLowerCase().equals("id")){
+			if(suiteFolder.equals("web"))
+			{
+				element = getWebDriver().findElements(MobileBy.id(locatorValue));
+			}
+
+		} else if (locatorType[1].toLowerCase().equals("name")){
+			if(suiteFolder.equals("web"))
+			{
+				element = getWebDriver().findElements(MobileBy.name(locatorValue));
+			}
+
+		}
+		else if (locatorType[1].toLowerCase().equals("AccessibilityId")){
+			if(suiteFolder.equals("web"))
+			{
+				element = getWebDriver().findElements(MobileBy.AccessibilityId(locatorValue));
+			}
+
+		} else if (locatorType[1].toLowerCase().equals("AndroidUIAutomator")){
+			if(suiteFolder.equals("web"))
+			{
+				element = getWebDriver().findElements(MobileBy.AndroidUIAutomator(locatorValue));
+			}
+
+		} else if (locatorType[1].toLowerCase().equals("IosUIAutomation")){
+			if(suiteFolder.equals("web"))
+			{
+				element = getWebDriver().findElements(MobileBy.IosUIAutomation(locatorValue));
+			}
+
+		} else if (locatorType[1].toLowerCase().equals("className")){
+			if(suiteFolder.equals("web"))
+			{
+				element = getWebDriver().findElements(MobileBy.className(locatorValue));
+			}
+
+		} else if (locatorType[1].toLowerCase().equals("cssSelector")){
+			if(suiteFolder.equals("web"))
+			{
+				element = getWebDriver().findElements(MobileBy.cssSelector(locatorValue));
+			}
+			
+		} else if (locatorType[1].toLowerCase().equals("linkText")){
+			if(suiteFolder.equals("web"))
+			{
+				element = getWebDriver().findElements(MobileBy.linkText(locatorValue));
+			}
+			
+		} else if (locatorType[1].toLowerCase().equals("partialLinkText")){
+			if(suiteFolder.equals("web"))
+			{
+				element = getWebDriver().findElements(MobileBy.partialLinkText(locatorValue));
+			}
+
+		} else if (locatorType[1].toLowerCase().equals("tagName")){
+			if(suiteFolder.equals("web"))
+			{				
+				element = getWebDriver().findElements(MobileBy.tagName(locatorValue));
+			}
+
+		} else if (locatorType[1].toLowerCase().equals("xpath")){
+
+			if(suiteFolder.equals("web"))
+			{
+				element = getWebDriver().findElements(MobileBy.xpath(locatorValue));
+			}
+		}
+		else
+		{
+			ExtentReporterNG.failurereason = "Locator Type [" +locatorType[1] +"] is not correct for element +[" +elementName +"]";
+			Assert.fail();
+		}
+		return element;
+	}
+
+	@AfterSuite
+	public static void tearDown(ITestContext tr) throws IOException, InterruptedException{
+		if(suiteFolder.equals("web"))
+		{
+			webdriver.quit();
+		}
+	}
+
+
+
+}

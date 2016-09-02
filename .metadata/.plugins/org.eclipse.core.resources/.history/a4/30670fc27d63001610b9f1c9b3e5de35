@@ -1,0 +1,337 @@
+package com.devstringx.tests.web.RSA.Functions;
+
+import org.testng.annotations.BeforeClass;
+
+import com.devstringx.utils.FileOperations;
+import com.thoughtworks.selenium.webdriven.commands.TypeKeys;
+
+import java.util.List;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.testng.Assert;
+import org.testng.annotations.AfterClass;
+import com.devstringx.utils.ElementOperations;
+import com.devstringx.utils.ExtentReporterNG;
+import com.devstringx.utils.AssertionOperations;
+public class CommonFunctions extends ElementOperations{
+
+	@BeforeClass
+	public static void Login() throws InterruptedException
+	{	
+		System.out.println("Hello Testing is started");
+		waitUntilWebElementClickable("LoginButton_xpath",120);
+		///Enter User name
+		TypeText("LoginEmailAddress_xpath",FileOperations.getValueFromPropertyFile(configFilePath,"username"));
+
+		//Enter PAssword
+		TypeText("LoginPassword_xpath",FileOperations.getValueFromPropertyFile(configFilePath,"password"));
+
+		//click on sigin button
+		Click("LoginSumbitButton_Xpath");
+
+		Thread.sleep(1000);
+		//wait until CRM tab is visible
+		waitUntilWebElementVisible("CRMTab_xpath", 120);
+	}
+	
+	public static void loginAsSimpleUser() throws InterruptedException
+	{	
+		System.out.println("Hello Testing is started");
+		waitUntilWebElementClickable("SignIn_xpath",120);
+		///Enter User name
+		TypeText("username_id",FileOperations.getValueFromPropertyFile(configFilePath,"simpleusername"));
+
+		//Enter PAssword
+		TypeText("password_id",FileOperations.getValueFromPropertyFile(configFilePath,"simplepassword"));
+
+		//click on sigin button
+		Click("SignIn_xpath");
+
+		Thread.sleep(1000);
+		//wait until CRM tab is visible
+		waitUntilWebElementVisible("ProfilePic_xpath", 120);
+	}
+
+	public static void loginAsfullUserAccess() throws InterruptedException
+	{	
+		System.out.println("Hello Testing is started");
+		waitUntilWebElementClickable("SignIn_xpath",120);
+		///Enter User name
+		TypeText("username_id",FileOperations.getValueFromPropertyFile(configFilePath,"fullacessusername"));
+
+		//Enter PAssword
+		TypeText("password_id",FileOperations.getValueFromPropertyFile(configFilePath,"fullacesspassword"));
+
+		//click on sigin button
+		Click("SignIn_xpath");
+
+		Thread.sleep(1000);
+		//wait until CRM tab is visible
+		waitUntilWebElementVisible("CRMTab_xpath", 120);
+	}
+
+	@AfterClass
+	public static void Logout() throws InterruptedException
+	{
+		Thread.sleep(4000);
+		waitUntilWebElementClickable("//img[@class='profile_img']",120);
+	    Thread.sleep(1000);
+		Click("//img[@class='profile_img']");//click on profile icon
+		waitUntilWebElementClickable("//a[text()='Log Out']",120);
+		Thread.sleep(1000);
+		waitUntilWebElementClickable("",120);
+		driver.findElement(By.xpath("//a[text()='Log Out']")).click();//click on logout button
+		Thread.sleep(8000);
+        driver.close();
+		
+	}
+
+
+	/***
+	 * This function for adding contact as per given parameter
+	 * @param contactName: Name of contact need to add
+	 */
+	public static void addContact(String contactName)
+	{
+		// Press + CONTACT button (top right corner)
+		waitUntilWebElementClickable("PlusContactBtn_xpath",120);
+		Click("PlusContactBtn_xpath");
+
+		//  Wait For AddContact Form will be open
+		waitUntilWebElementVisible("AddNewContactFormHeader_xpath", 120);
+
+		//Fill Contact Name
+		TypeText("firstNameTxtField_xpath", contactName);
+
+		//Fill Contact Email 
+		TypeText("emailTxtField_xpath",contactName+"@gmail.com");
+
+		//Click on Save and Close"
+		Click("saveandCloseBtn_xpath");
+
+	}
+
+
+	public static void goToGroupPage()
+	{
+		//Click on more button from contact page
+		Click("ContactMoreBtn_xpath");
+
+		//Click on Contact Group button from more menu option
+		Click("contactGroup_xpath");
+		waitUntilWebElementClickable("addGroupBtn_xpath", 120);
+		
+	}
+	/***
+	 * This function for adding Group as per give parameter
+	 * @param groupName: name of group need to add
+	 */
+	public static void addGroup(String groupName)
+	{
+		//Click on more button from contact page
+		Click("ContactMoreBtn_xpath");
+
+		//Click on Contact Group button from more menu option
+		Click("contactGroup_xpath");
+		waitUntilWebElementClickable("addGroupBtn_xpath", 120);
+
+		//Click on Add Group button
+		Click("addGroupBtn_xpath");
+
+		//Wait For Group Name field display on Add Group Popup
+		waitUntilWebElementVisible("groupName_xpath", 120);
+
+		//Put Group Name
+		TypeText("groupName_xpath", groupName);
+
+		//Click on save button
+		Click("addSaveBtn_id");
+	}
+
+
+	public static void searchGroup(String groupName)
+	{
+		TypeText("searchField_xpath",groupName);
+		Click("searchIcon_xpath");
+	}
+	
+	public static void openAddDealWindow()
+	{
+		waitUntilWebElementClickable("addDealBtn_xpath", 120);
+		Click("addDealBtn_xpath");
+		waitUntilWebElementVisible("modalWindowHeader_xpath", 120);
+	}
+	
+	public static void selectDayFromCalender(int day)
+	{
+		try{
+		getWebDriver().findElement(By.xpath("//td[@class='day' and contains(text(),'"+day+"')]")).click();
+		}
+		catch(Exception e)
+		{
+			ExtentReporterNG.screenshotname=takeScreenshot("selectDayFromCalender");
+			ExtentReporterNG.failurereason = e.getMessage();
+	    	Assert.fail();
+		}
+	}
+
+	
+	public static void submitDeal()
+	{
+		waitUntilWebElementClickable("dealSubmitBtn_xpath", 120);
+		Click("dealSubmitBtn_xpath");
+	}
+	
+	
+	/***
+	 * Search contact from contact list page
+	 
+	public static void  searchContactFromListPage(String contactFullName)
+	{
+		TypeText("contactNamefieldTxtField_xpath", contactFullName);
+		/**halfdone**
+	}
+	*/
+	
+	/***
+	 * Open Activity window by clicking email icon from action bar
+	 * @throws InterruptedException 
+	 */
+	public static void clickEmailIconFromActionBar() throws InterruptedException
+	{
+		waitUntilWebElementClickable("actionbarEmailIcon_xpath", 120);
+		Click("actionbarEmailIcon_xpath");
+		Thread.sleep(2000);
+		
+		
+	}
+
+	/***
+	 * for send mail from contact detail page->Email icon displayed on action bar.
+	 * ##Precondition: user should already on contact detail page##
+	 * @throws InterruptedException 
+	 */
+	public static void sendMailByActionBar(String Subject) throws InterruptedException
+	{
+		clickEmailIconFromActionBar();
+		
+		waitUntilWebElementVisible("emailSubjectTextField_xpath", 120);
+		Thread.sleep(1000);
+		TypeText("emailSubjectTextField_xpath",Subject);
+		Thread.sleep(1000);
+		Click("emailSendBtn_xpath");
+		
+	      String successfullMsg  = getText("ValidationPopupmessage_xpath");
+	      AssertionOperations.verifyStringsEquality(successfullMsg, "Your mail successfully sent.");
+		
+	}
+	
+	/***
+	 * for send mail from contact detail page->Email icon displayed on profile tabs.
+	 * ##Precondition: user should already on contact detail page##
+	 */
+	public static void sendMailByProfileTabs(String Subject)
+	{
+		waitUntilWebElementClickable("profileblockEmailIcon_xpath", 120);
+		Click("profileblockEmailIcon_xpath");
+		waitUntilWebElementVisible("emailSubjectTextField_xpath", 120);
+		
+		TypeText("emailSubjectTextField_xpath",Subject);
+		Click("emailSendBtn_xpath");
+		
+	      String successfullMsg  = getText("ValidationPopupmessage_xpath");
+	      AssertionOperations.verifyStringsEquality(successfullMsg, "Your mail successfully sent.");
+		
+	}
+	
+	/***
+	 * for send mail from contact detail page->Activity Button displayed on action bar.
+	 * ##Precondition: user should already on contact detail page##
+	 */
+	public static void sendMailByClickingActivity(String Subject)
+	{
+		waitUntilWebElementClickable("actionbarActivityTab_xpath", 120);
+		Click("actionbarActivityTab_xpath");
+		Click("EmailFromActivity_Xpath");
+		waitUntilWebElementVisible("emailSubjectTextField_xpath", 120);
+		
+		TypeText("emailSubjectTextField_xpath",Subject);
+		Click("emailSendBtn_xpath");
+		
+	      String successfullMsg  = getText("ValidationPopupmessage_xpath");
+	      AssertionOperations.verifyStringsEquality(successfullMsg, "Your mail successfully sent.");
+		
+	}
+	
+	/***
+	 * for sent mail activity displayed on timeline.
+	 * ##Precondition: user should already on contact detail page##
+	 */
+	
+	public static void verifyEmailSentOnTimeline(String subject)
+	{
+		List<WebElement> element =getWebDriver().findElements(By.xpath("(//strong[contains(text(),'email')]/following-sibling::span[contains(text(),': "+subject+"')])[1]"));
+	    if(element.size()!=1){
+	    	ExtentReporterNG.screenshotname=takeScreenshot(subject);
+			ExtentReporterNG.failurereason = "Sent Email Activity not displayed on timeline of subject= " + subject;
+	    	Assert.fail();
+	    }
+	
+	}
+	
+	
+	/***
+	 * for verify email displayed on sent mail box
+	 * @throws InterruptedException 
+	 */
+	
+	public static void verifySentMail(String emailid,String subject) throws InterruptedException
+	{
+		String url = FileOperations.getValueFromPropertyFile(configFilePath, "baseUrl");
+		getWebDriver().navigate().to(url + "contacts/lists"); // Need to look
+		Thread.sleep(1000);
+		//go to contact detail page
+		 getWebDriver().findElement(By.xpath("//tbody[@role='rowgroup']/tr/td/a[text()='"+emailid+"']")).click();
+	    
+		 Thread.sleep(1000);
+		 String getmailsentTime =  getWebDriver().findElement(By.xpath("(//strong[contains(text(),'email')]/following-sibling::span[contains(text(),': dfsdf')])[1]/ancestor::div/div/div[contains(@class,'pull-right')]/span")).getText();
+	
+		 
+			//go to Email sent box
+			getWebDriver().navigate().to(url + "mailbox/sent_mails");
+
+			waitUntilWebElementVisible("searchTxtField_xpath", 120);
+			
+			TypeText("searchTxtField_xpath",emailid);
+			Click("searchIcon_xpath");
+			//open sent mail
+			Click("firstemail_xpath");
+
+	
+			String sentMailTiming = getWebDriver().findElement(By.xpath("(//p[contains(text(),'"+emailid+"')]/ancestor::div[contains(@class,'span')]/following-sibling::div/span)[1]")).getText();
+	
+			AssertionOperations.verifyStringsEquality(getmailsentTime, sentMailTiming);
+	}
+	
+	public static void ConnectWithGoogleintoMailbox() throws InterruptedException
+	{
+		Click("ConnecttomyEmailRadioBtn_xpath");
+		waitUntilWebElementClickable("googleSyncBtn_xpath", 120);
+		Click("googleSyncBtn_xpath");
+		
+		//String a = FileOperations.getValueFromPropertyFile(configFilePath,"gmailusername");//no use
+		TypeText("GmailUsername_xpath",FileOperations.getValueFromPropertyFile(configFilePath,"gmailusername"));
+		Click("GmailUsernameNext_xpath");
+		waitUntilWebElementClickable("GmailPassword_xpath", 120);
+
+		//Enter Password
+		TypeText("GmailPassword_xpath",FileOperations.getValueFromPropertyFile(configFilePath,"gmailpass"));
+		Click("GmailSubmit_xpath");
+		Thread.sleep(3000);
+		waitUntilWebElementClickable("googleAllowBtn_id", 120);
+		Click("googleAllowBtn_id");
+		Thread.sleep(2000);
+	}
+	
+}

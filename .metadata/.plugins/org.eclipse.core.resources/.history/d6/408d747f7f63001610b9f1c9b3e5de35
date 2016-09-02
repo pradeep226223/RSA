@@ -1,0 +1,40 @@
+package com.devstringx.tests.web.RSA.Functions;
+
+import org.openqa.selenium.By;
+
+import com.devstringx.utils.ElementOperations;
+import com.devstringx.utils.FileOperations;
+
+public class GmailFeature extends ElementOperations {
+
+	public static void loginGmail()
+	{
+		//Sign Into Gmail Account
+		getWebDriver().navigate().to("https://www.gmail.com/");
+
+		//Enter User name
+		String a = FileOperations.getValueFromPropertyFile(configFilePath,"gmailusername");
+		TypeText("GmailUsername_xpath",FileOperations.getValueFromPropertyFile(configFilePath,"gmailusername"));
+		Click("GmailUsernameNext_xpath");
+		waitUntilWebElementClickable("GmailPassword_xpath", 120);
+
+		//Enter Password
+		TypeText("GmailPassword_xpath",FileOperations.getValueFromPropertyFile(configFilePath,"gmailpass"));
+		Click("GmailSubmit_xpath");
+		waitUntilWebElementClickable("GmailComposeButton_xpath", 120);
+	}
+
+	public static void searchAndOpenEmail(String subject) throws InterruptedException{
+		TypeText("GmailSearchField_xpath",FileOperations.getValueFromPropertyFile(configFilePath,"gmailsearchvalue"));
+		Thread.sleep(2000);
+		Click("GmailSearchEmailButton_xpath");
+		Thread.sleep(3000);
+		getWebDriver().findElement(By.xpath("//tbody/tr[1]//b[text()='"+subject+"']")).click();
+		Thread.sleep(1000);
+
+	}
+
+
+
+
+}

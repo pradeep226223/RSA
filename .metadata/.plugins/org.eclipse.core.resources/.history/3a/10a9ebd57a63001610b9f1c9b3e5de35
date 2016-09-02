@@ -1,0 +1,195 @@
+package com.devstringx.tests.web.RSA;
+
+import org.openqa.selenium.By;
+import org.testng.annotations.Test;
+
+import com.devstringx.tests.web.Tieit.Functions.CommonFunctions;
+import com.devstringx.utils.AssertionOperations;
+import com.devstringx.utils.FileOperations;
+
+/*********************************************************
+ *********FILTERING CONTACT LIST******	
+ * @throws InterruptedException
+ ***********************************************************/
+
+public class ContactListFilter extends CommonFunctions{
+
+	public static String rndm = generateRandomAlphaNumeric(2);
+	static String contactName = "test"+rndm;
+	static String groupName = "GroupForTest"+rndm;
+
+	/***
+	 * Contact List Filter Option works
+	 * @throws InterruptedException
+	 */
+	@Test (priority=1)
+	public static void verifyContactNameFilter() throws InterruptedException
+	{ 
+		//1) Hover over CRM,2) Click on Contacts
+		//moveMouseAndClick("CRMTab_xpath","CRMContactTab_xpath");
+		 String url = FileOperations.getValueFromPropertyFile(configFilePath, "baseUrl");
+		getWebDriver().navigate().to(url + "contacts/lists"); // Need to look
+
+		//3) Click on ArrowHead icon and Click the Filter Option
+		Click("ContactNameSettingBtn_xpath");
+		Thread.sleep(1000);
+
+		//4. Select the filter options from the dropdown
+		moveMouse("filterOption_xpath");
+		Thread.sleep(1000);
+		Click("filterMenufirstSelectValueDropdown_xpath");
+		String filterName = getText("filterMenufirstSelectValueOption_xpath");
+		Click("filterMenufirstSelectValueOption_xpath");
+
+		// 5) Click the Filter button
+		Click("menuFilterBtn_xpath");
+		Thread.sleep(1000);
+
+		//Contact List should show only the contacts that match the criteria of your Filter
+		int count = getCount("ContactNamelist_xpath");
+		for(int i=1;i<=count;i++){
+			String actualFilterName = getWebDriver().findElement(By.xpath("//div[contains(@class,'contact-list')]//table/tbody/tr["+i+"]/td[2]/a")).getText();
+			AssertionOperations.verifyStringsEquality(filterName,actualFilterName);
+		}
+	}
+
+	/***
+	 * Contact List Filter Option clears the filter
+	 * @throws InterruptedException
+	 */
+	@Test (priority=2)
+	public static void verifyContactNameClearFilter() throws InterruptedException
+	{ 
+		//1) Hover over CRM,2) Click on Contacts
+		//moveMouseAndClick("CRMTab_xpath","CRMContactTab_xpath");
+		 String url = FileOperations.getValueFromPropertyFile(configFilePath, "baseUrl");
+		getWebDriver().navigate().to(url + "contacts/lists"); // Need to look
+
+		int beforeFiltercount = getCount("ContactNamelist_xpath");
+		//3) Click on ArrowHead icon and Click the Filter Option
+		Click("ContactNameSettingBtn_xpath");
+		Thread.sleep(1000);
+
+
+		//4. Select the filter options from the dropdown
+		moveMouse("filterOption_xpath");
+		Thread.sleep(1000);
+		Click("filterMenufirstSelectValueDropdown_xpath");
+		Click("filterMenufirstSelectValueOption_xpath");
+
+		// 5) Click the Filter button
+		Click("menuFilterBtn_xpath");
+		Thread.sleep(1000);
+
+
+		int afterFiltercount = getCount("ContactNamelist_xpath");
+
+		//6.Repeat Steps 3 to 4 and click on clear button
+		Click("ContactNameSettingBtn_xpath");
+		Thread.sleep(1000);
+		moveMouse("filterOption_xpath");
+		Thread.sleep(1000);
+		Click("menuClearFilterBtn_xpath");
+
+		//Contact List should go back to complete Contact Listing
+		AssertionOperations.verifyStringsNotEqual(beforeFiltercount, afterFiltercount);
+
+	}
+
+	/***
+	 * Contact List Filter Option closes
+	 * @throws InterruptedException
+	 */
+	@Test (priority=3)
+	public static void verifyContactNamecloseFilter() throws InterruptedException
+	{ 
+		//1) Hover over CRM,2) Click on Contacts
+		//moveMouseAndClick("CRMTab_xpath","CRMContactTab_xpath");
+		 String url = FileOperations.getValueFromPropertyFile(configFilePath, "baseUrl");
+		getWebDriver().navigate().to(url + "contacts/lists"); // Need to look
+
+		int beforeFiltercount = getCount("ContactNamelist_xpath");
+		//3) Click on ArrowHead icon and Click the Filter Option
+		Click("ContactNameSettingBtn_xpath");
+		Thread.sleep(1000);
+
+		//4) Select the filter options from the dropdown
+		moveMouse("filterOption_xpath");
+		Thread.sleep(1000);
+		Click("filterMenufirstSelectValueDropdown_xpath");
+		//String filterName = getText("filterMenufirstSelectValueOption_xpath");
+		Click("filterMenufirstSelectValueOption_xpath");
+
+		moveMouse("filterOption_xpath");		
+		Thread.sleep(1000);
+		int afterFiltercount = getCount("ContactNamelist_xpath");
+
+		//5) Close filter popup without clicking filter button
+		Click("ContactNameSettingBtn_xpath");
+		Thread.sleep(1000);
+		AssertionOperations.verifyStringsEquality(beforeFiltercount, afterFiltercount);
+
+	}
+
+
+	/***
+	 * Contact Filter by Group
+	 * @throws InterruptedException 
+	 */
+	@Test(priority=3)
+	public static void filterByGroup() throws InterruptedException
+	{
+		addContact(contactName);
+		 String url = FileOperations.getValueFromPropertyFile(configFilePath, "baseUrl");
+		getWebDriver().navigate().to(url + "contacts/lists"); // Need to look
+		
+		addGroup(groupName);
+		
+		getWebDriver().navigate().to(url + "contacts/lists"); // Need to look
+		
+		Click("groupNameSettingBtn_xpath");
+		Thread.sleep(1000);
+
+		//4) Select the filter options from the dropdown
+		moveMouse("filterOption_xpath");
+		Thread.sleep(1000);
+		
+		Click("filterMenufirstSelectValueDropdown_xpath");
+		getWebDriver().findElement(By.xpath("(//div[text()='--Select Value--']//following-sibling::div//ul/li[text()='"+groupName+"'])[1]")).click();
+		
+		//5) Click the Filter button
+		Click("menuFilterBtn_xpath");
+		Thread.sleep(1000);
+		
+		//The contacts from the group should be shown
+		
+		//verify filtered totalCount
+		int aftercount = getCount("ContactNamelist_xpath");
+		AssertionOperations.verifyStringsEquality(aftercount, 1);
+		
+		//VerifyFilteredGroupContactName
+		String actualFilterContactName = getText("FirstContactName_xpath");
+		AssertionOperations.verifyStringsEquality(contactName,actualFilterContactName);
+		
+		//verifyFilteredGroupName
+		String actualFilterGroupName = getText("gridFirstRowGroupName_xpath");
+		AssertionOperations.verifyStringsEquality(actualFilterGroupName,groupName);
+		
+
+		//"Double check the group to see how many contacts are in there.
+		getWebDriver().navigate().to(url + "contacts/lists"); // Need to look
+		
+		//3) Click 3 vertical dots and select Contact Groups
+		goToGroupPage();
+		
+		//4) Confirm the number of contacts in a group"
+		TypeText("searchField_xpath","groupName");
+		Click("searchIcon_xpath");
+		String NumberOfContacts = getText("groupNumberOfContacts_xpath");
+		AssertionOperations.verifyStringsEquality(NumberOfContacts, "1");
+		
+	}
+
+	
+
+}

@@ -1,0 +1,337 @@
+package com.devstringx.tests.web.RSA;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.testng.annotations.Test;
+
+import com.devstringx.tests.web.RSA.Functions.CommonFunctions;
+import com.devstringx.utils.AssertionOperations;
+import com.devstringx.utils.FileOperations;
+
+import org.openqa.selenium.interactions.Actions;
+
+public class CRM_Deal extends CommonFunctions
+{
+	
+
+	public static void ClickonAddNewDeal(){
+		/*From mouse over CRM Click on Deal */
+		//moveMouseAndClick("//a[@class='active']//span[text()='CRM']","//a[text()='Deals']");
+		String url = FileOperations.getValueFromPropertyFile(configFilePath, "baseUrl");
+		getWebDriver().navigate().to(url + "crm/deals/list_deals"); 
+		waitUntilWebElementClickable("addDealBtn_xpath",120);
+		Click("addDealBtn_xpath");
+
+	}
+	
+	public static void verifyAddContactfromdealdropdown() throws InterruptedException
+	{    
+		
+		String rndm = generateRandomAlphaNumeric(2);
+        String newContact="Test"+rndm;
+
+		ClickonAddNewDeal();
+		waitUntilWebElementClickable("dealContactPerson_xpath",120);
+		Thread.sleep(5000);
+		TypeText("dealContactPerson_xpath",newContact);
+		Thread.sleep(3000);
+
+		waitUntilWebElementClickable("addNewContactDropdown_xpath",120);
+		Thread.sleep(3000);
+		//selectValueFromlistUsingText("addNewContactDropdown_xpath","Add a New Contact");
+		Thread.sleep(3000);
+		waitUntilWebElementClickable("Dealaddnewconatactfromlist_xpath",120);
+		Thread.sleep(5000);
+		//Click("Dealaddnewconatactfromlist_xpath");
+		moveMouseAndClick("Dealaddnewconatactfromlist_xpath","Dealaddnewconatactfromlist_xpath");
+
+		waitUntilWebElementClickable("DealAddContactEmail_Xpath",120);
+		String EmailSubject="TestEmail"+rndm+"@gmail.com";
+		TypeText("DealAddContactEmail_Xpath", EmailSubject);
+		waitUntilWebElementClickable("DealAddConatactSave_Xpath",120);
+		Click("DealAddConatactSave_Xpath");
+		Thread.sleep(3000);
+		//waitUntilWebElementClickable("dealAssigneedropdown_xpath",120);
+		Thread.sleep(5000);
+		getWebDriver().findElement(By.xpath("//span[text()='<< me >>']")).click();
+		Thread.sleep(3000);
+		//	selectValueFromlistUsingText("dealAssigneedropdown_xpath","Gaurav Singh");
+		String value="Gaurav";
+		getWebDriver().findElement(By.xpath("//li[contains(text(),'"+value+"')]")).click();
+
+		Thread.sleep(3000);
+		//selectValueFromlistUsingText("dealPipelineDropdown_xpath","Pipeline");
+		Click("dealPiplinedropdowncontrolclick_xpath");
+		Thread.sleep(2000);
+		Click("dealPiplinedselectvaluefromdropdown_xpath");
+		Thread.sleep(3000);
+		waitUntilWebElementClickable("dealSubmitBtn_xpath",120);
+		Click("dealSubmitBtn_xpath");
+	}
+
+	
+	public static void Verifydealwon() throws InterruptedException
+	{
+		verifyAddContactfromdealdropdown();
+
+		Thread.sleep(3000);
+		waitUntilWebElementClickable("deal3dots_xpath",120);
+		Click("deal3dots_xpath");
+		Thread.sleep(3000);
+		Click("deal3dotsWon_xpath");
+		Thread.sleep(3000);
+		Click("deal3dotswonconfrim_xpath");
+		Thread.sleep(3000);
+		String Deal_Status="Won";
+		Thread.sleep(10000);
+		int i=getWebDriver().findElements(By.xpath("//p[contains(text(),'"+Deal_Status+"')]")).size();
+		AssertionOperations.verifyStringsEquality(i,1);
+
+	}
+	
+	public static void clickoncanceldealwonpop() throws InterruptedException{
+		verifyAddContactfromdealdropdown();
+
+		Thread.sleep(3000);
+		waitUntilWebElementClickable("deal3dots_xpath",120);
+		String prestatus =getText("dealstatustext_xpath");
+		Click("deal3dots_xpath");
+		Thread.sleep(3000);
+
+		Click("deal3dotsWon_xpath");
+		Thread.sleep(3000);
+
+		//deal won cancel
+		Click("dealwonopopcancel_xpath");
+		String poststatus =getText("dealstatustext_xpath");
+		AssertionOperations.verifyStringsEquality(prestatus, poststatus);
+	}
+	
+	public static void verifyreopendeal() throws InterruptedException{
+		Verifydealwon();
+
+		waitUntilWebElementClickable("deal3dots_xpath",120);
+		String prestatus =getText("dealstatustext_xpath");
+		Thread.sleep(3000);
+		Click("deal3dots_xpath");
+		Thread.sleep(3000);
+		Click("deal3dotsOpen_xpath");
+		Thread.sleep(3000);
+		Click("deal3dotsopenconfrim_xpath");
+		Thread.sleep(3000);
+		refreshPage();
+		Thread.sleep(5000);
+		String poststatus =getText("dealstatustext_xpath");
+		AssertionOperations.verifyStringsNotEqual(poststatus, prestatus);
+		AssertionOperations.verifyStringsEquality(poststatus, "Open");
+	}
+	
+	public static void VerifyDealLost() throws InterruptedException{
+		verifyAddContactfromdealdropdown();
+
+		Thread.sleep(3000);
+		waitUntilWebElementClickable("deal3dots_xpath",120);
+		Click("deal3dots_xpath");
+		Thread.sleep(3000);
+		Click("deal3dotsLost_xpath");
+		Thread.sleep(3000);
+		Click("deal3dotsLostConfrim_xpath");
+		Thread.sleep(3000);
+		refreshPage();
+		Thread.sleep(5000);
+		String Deal_Status="Lost";
+		Thread.sleep(5000);
+		int i=getWebDriver().findElements(By.xpath("//p[contains(text(),'"+Deal_Status+"')]")).size();
+		AssertionOperations.verifyStringsEquality(i,1);
+	}
+	
+	public static  void VerifyOpenLostDeal() throws InterruptedException{
+
+		VerifyDealLost();
+		waitUntilWebElementClickable("deal3dots_xpath",120);
+		String prestatus =getText("dealstatustext_xpath");
+		Thread.sleep(3000);
+		Click("deal3dots_xpath");
+		Thread.sleep(3000);
+		Click("deal3dotsOpen_xpath");
+		Thread.sleep(3000);
+		Click("deal3dotsopenconfrim_xpath");
+		Thread.sleep(2000);
+		refreshPage();
+		Thread.sleep(5000);
+		String poststatus =getText("dealstatustext_xpath");
+		AssertionOperations.verifyStringsNotEqual(prestatus, poststatus);
+		AssertionOperations.verifyStringsEquality(poststatus, "Open");
+
+	}
+	//@Test
+	public static void VerifyUserAbleToDuplicateAdeal() throws InterruptedException{
+		//verifyAddContactfromdealdropdown();
+		 String rndm = generateRandomAlphaNumeric(2);
+		String url = FileOperations.getValueFromPropertyFile(configFilePath, "baseUrl");
+		getWebDriver().navigate().to(url + "crm/deals/list_deals"); 
+		Thread.sleep(5000);
+		String s=getWebDriver().findElement(By.xpath("//tbody[@role='rowgroup']//tr[2]//td[2]//a")).getText();
+		Thread.sleep(3000);
+		getWebDriver().findElement(By.xpath("//tbody[@role='rowgroup']//tr[2]//td[2]//a")).click();
+		Thread.sleep(5000);
+		Click("deal3dots_xpath");
+		Thread.sleep(3000);
+		Click("deal3dotsduplicate_xpath");
+		waitUntilWebElementClickable("deal3dotsDuplicateconfrimtext_xpath",120);
+		Thread.sleep(2000);
+		TypeText("deal3dotsDuplicateconfrimtext_xpath","Deal"+rndm);
+		Thread.sleep(3000);
+		Click("deal3dotsDuplicateconfrim_xpath");
+		Thread.sleep(3000);
+		//moveMouseAndClick("CRMTab_xpath","CRMDeal_xpath");//Not Working
+		getWebDriver().navigate().to(url + "crm/deals/list_deals"); 
+		Thread.sleep(5000);
+		
+		moveMouseAndClick("FilterButtonGridLastColumns_Xpath","FilterColumnsPipelinecheckbox_xpath");
+		Thread.sleep(3000);
+
+		//pending
+
+
+	}
+	
+	public static void VerifycloseDeal() throws InterruptedException{
+		verifyAddContactfromdealdropdown();
+
+		waitUntilWebElementClickable("deal3dots_xpath",120);
+		String prestatus =getText("dealstatustext_xpath");
+		Thread.sleep(3000);
+		Click("deal3dots_xpath");
+		Thread.sleep(3000);
+		Click("deal3dotsClose_xpath");
+		Thread.sleep(3000);
+		Click("deal3dotsCloseconfrim_xpath");
+		refreshPage();
+		Thread.sleep(5000);
+		String poststatus =getText("dealstatustext_xpath");
+		AssertionOperations.verifyStringsNotEqual(prestatus, poststatus);
+		AssertionOperations.verifyStringsEquality(poststatus, "Closed");
+
+	}
+	
+	public static void VerifyOpentheClosedDeal() throws InterruptedException{
+		VerifycloseDeal();
+
+		waitUntilWebElementClickable("deal3dots_xpath",120);
+		String prestatus =getText("dealstatustext_xpath");
+		Thread.sleep(3000);
+		Click("deal3dots_xpath");
+		Thread.sleep(3000);
+		Click("deal3dotsOpen_xpath");
+		Thread.sleep(3000);
+		Click("deal3dotsopenconfrim_xpath");
+		refreshPage();
+		Thread.sleep(5000);
+		String poststatus =getText("dealstatustext_xpath");
+		AssertionOperations.verifyStringsNotEqual(prestatus, poststatus);
+		AssertionOperations.verifyStringsEquality(poststatus, "Open");
+
+	}
+	
+	public static void VerifyPreDeal() throws InterruptedException{
+		String url = FileOperations.getValueFromPropertyFile(configFilePath, "baseUrl");
+		getWebDriver().navigate().to(url + "crm/deals/list_deals");
+		Thread.sleep(5000);
+		getWebDriver().findElement(By.xpath("//div[@id='dealsGrid']//tr[5]/td[2]/a")).click();
+		Thread.sleep(6000);
+		Click("deal3dots_xpath");
+		Thread.sleep(3000);
+		Click("deal3dotsPrevDeal_xpath");
+		Thread.sleep(5000);
+		String preDeal=getText("dealname_xpath");
+
+		getWebDriver().navigate().to(url + "crm/deals/list_deals");
+		Thread.sleep(10000);
+		getWebDriver().findElement(By.xpath("//div[@id='dealsGrid']//tr[4]/td[2]/a")).click();
+		Thread.sleep(10000);
+		String PostDeal=getText("dealname_xpath");
+		AssertionOperations.verifyStringsEquality(PostDeal, preDeal);
+	}
+	
+	public static void verifyEditDealContactName() throws InterruptedException{
+		verifyAddContactfromdealdropdown();
+		 
+		String contactnamePre=getText("dealcontactidgettext_xpath");
+		Thread.sleep(3000);
+		pagescrollDown();
+		Thread.sleep(3000);
+		Actions mouse=new Actions(getWebDriver());
+	    mouse.contextClick((getWebDriver().findElement(By.xpath("//a[@data-name='contact_id']/following::a[@data-ref='.edit-contact']")))).perform();
+		waitUntilWebElementClickable("dealcontactpersonedit_xpath",120);
+		
+		Thread.sleep(3000);
+		Click("dealcontactpersonedit_xpath");
+		 mouse.contextClick((getWebDriver().findElement(By.xpath("//a[@data-name='contact_id']/following::a[@data-ref='.edit-contact']")))).perform();
+		Thread.sleep(3000);
+		Click("dealcontactpersoneditdropdown_xpath");
+		Thread.sleep(3000);
+		Click("dealcontactpersontextbox_xpath");
+		Thread.sleep(3000);
+		TypeText("dealcontactpersontextbox_xpath","testGaurav testing");
+		
+		Thread.sleep(3000);
+		Click("dealcontacteditdropdownfirstname_xpath");
+		//selectValueFromlistUsingText("dealcontactpersondropdownlist_xpath","testGaurav testing");
+		//Thread.sleep(5000);
+		
+
+		Thread.sleep(3000);		
+		Click("dealcontactpersoneditcheckbox_xpath");//click on check box
+		Thread.sleep(3000);		
+		String contactnamePost=getText("dealcontactidgettext_xpath");
+		Thread.sleep(3000);	
+		AssertionOperations.verifyStringsNotEqual(contactnamePost, contactnamePre);
+	}
+	
+	public static void verifyEditAssigneeName() throws InterruptedException{
+		verifyAddContactfromdealdropdown();
+
+		Thread.sleep(3000);
+		String contactnamePre=getText("dealeditassigneeText_xpath");
+		Thread.sleep(3000);
+		pagescrollDown();
+		//waitUntilWebElementClickable("dealeditassigneename_xpath",120);
+		//moveMouseAndClick("dealeditassigneename_xpath","dealeditassigneename_xpath");
+		Thread.sleep(3000);
+		Actions mouse=new Actions(getWebDriver());
+		mouse.contextClick((getWebDriver().findElement(By.xpath("//a[@id='edit-assignee']/following::a[@data-ref='.edit-assignee']")))).perform();
+		waitUntilWebElementClickable("dealeditassigneeEditButton_xpath",120);//mouse over not working and control not visible
+		Click("dealeditassigneeEditButton_xpath");
+		Thread.sleep(3000);
+		selectValueFromlistUsingText("dealeditassigneenameDropdown_xpath","Simple User (Prod)");
+		Thread.sleep(3000);
+		Click("dealeditassignnamecheckbox_xpath");
+		Thread.sleep(3000);
+		String contaactnamePost=getText("dealeditassigneeText_xpath");
+		AssertionOperations.verifyStringsNotEqual(contaactnamePost, contactnamePre);
+	}
+	@Test
+	public static void verifyEditOwnnerName() throws InterruptedException{
+		verifyAddContactfromdealdropdown();
+
+		Thread.sleep(3000);
+		pagescrollDown();
+		Thread.sleep(3000);
+		String contactnamePre=getText("dealeditOwnnerName_xpath");
+		Actions mouse=new Actions(getWebDriver());
+		mouse.contextClick((getWebDriver().findElement(By.xpath("//a[@id='edit-owner']/following::a[@data-ref='.edit-owner']")))).perform();
+		waitUntilWebElementClickable("dealeditOwnnerEditButton_Xpath",120);//mouse over not working and control not visible
+		//Click("dealeditOwnnerName_xpath");
+		Click("dealeditOwnnerEditButton_Xpath");
+		Thread.sleep(5000);
+		selectValueFromlistUsingText("dealeditOwnnerDropDown_Xpath","Simple User (Prod)");
+		Thread.sleep(3000);
+		Click("dealeditassignnamecheckbox_xpath");
+		Thread.sleep(3000);
+		String contaactnamePost=getText("dealeditOwnnerName_xpath");
+		AssertionOperations.verifyStringsNotEqual(contaactnamePost, contactnamePre);
+	}
+}
+
+

@@ -1,0 +1,436 @@
+package com.devstringx.utils;
+
+
+
+import java.awt.AWTException;
+import java.awt.Robot;
+import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
+import com.devstringx.utils.ExtentReporterNG;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.openqa.selenium.Alert;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.Assert;
+
+import com.devstringx.baseclass.BaseClass;
+public class ElementOperations extends BaseClass {
+	
+	public static ExtentReporterNG ExtentReporterNG;
+	public static void setGlobalTimeouts(int pgeLoadTime, int browserLoadTimeout){
+		getWebDriver().manage().timeouts().pageLoadTimeout(browserLoadTimeout, TimeUnit.SECONDS);
+		getWebDriver().manage().timeouts().implicitlyWait(pgeLoadTime, TimeUnit.SECONDS);
+	}
+	public static void maximizeWindow(){
+		getWebDriver().manage().window().maximize();
+	}
+	public static void refreshPage()
+	{
+		getWebDriver().navigate().refresh();
+	}
+	public static void openApplicationUrl(String baseUrl){
+		getWebDriver().get(baseUrl);
+		//ExtentReporterNG.log("ApplicationUrl Opened Successfully");
+	}
+	public static String takeScreenshot(String name)
+	{
+		Date currDate = new Date();
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+		String dateAndTime = dateFormat.format(currDate);
+		System.out.println(dateAndTime);
+
+		File scrFile = screenshot();   
+		String path = FileOperations.getPath();
+		try 
+		{
+			//FileUtils.copyFile(scrFile, new File("screenshots/" + name + "_" + dateAndTime +".png"));
+			FileUtils.copyFile(scrFile, new File("results/screenshots/" + name +".png"));
+		} catch (IOException e) 
+		{
+			e.printStackTrace();
+		}
+
+		//return path+"/screenshots/" + name + "_" + dateAndTime +".png";
+		return path+"/results/screenshots/" + name +".png";
+	}
+	public static void TypeText(String elementName, String value)
+	{
+		WebElement element = getElement(elementName);
+		try {
+			element.clear();
+			element.sendKeys(value);
+		}catch (AssertionError e){
+			e.printStackTrace();
+			ExtentReporterNG.screenshotname=takeScreenshot(elementName);
+			ExtentReporterNG.failurereason = e.getMessage(); 
+			Assert.fail();
+		}
+
+	}
+	public static void Click(String elementName)
+	{
+
+		WebElement element = getElement(elementName);
+		try
+		{
+			ExtentReporterNG.screenshotname =takeScreenshot(elementName);
+			element.click();
+		}
+		catch (AssertionError e){
+			e.printStackTrace();
+			ExtentReporterNG.screenshotname =takeScreenshot(elementName);
+			ExtentReporterNG.failurereason = e.getMessage(); 
+			Assert.fail();
+
+		}	
+
+	}
+	public static void waitUntilWebElementVisible(String element,long waittime)
+	{
+		try
+		{
+			WebElement locator = getElement(element);
+			WebDriverWait wait = new WebDriverWait(getWebDriver(),waittime);
+			wait.until(ExpectedConditions.visibilityOf(locator));
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			com.devstringx.utils.ExtentReporterNG.screenshotname=takeScreenshot(element);
+			com.devstringx.utils.ExtentReporterNG.failurereason = e.getMessage(); 
+			Assert.fail();
+		}
+
+	}
+	public static void waitUntilWebElementClickable(String element,long waittime)
+	{
+		try
+		{
+			WebElement locator = getElement(element);
+			WebDriverWait wait = new WebDriverWait(getWebDriver(),waittime);
+			wait.until(ExpectedConditions.elementToBeClickable((locator)));
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			ExtentReporterNG.screenshotname=takeScreenshot(element);
+			ExtentReporterNG.failurereason = e.getMessage(); 
+			Assert.fail();
+		}
+
+	}
+	public static void WaitForElement(String strElementLogicalName) throws InterruptedException
+	{
+
+		for (int i=1; i<30; i++){
+			Thread.sleep(Integer.parseInt(FileOperations.getValueFromPropertyFile(configFilePath, "elementWaitTime")));
+			try{
+
+				WebElement objWebElement = ElementOperations.getElement(strElementLogicalName);
+				boolean bStatus=objWebElement.isDisplayed();
+				Assert.assertTrue(bStatus);
+				break;
+			} catch (AssertionError e){
+
+				e.printStackTrace();
+				ExtentReporterNG.screenshotname=takeScreenshot("waitFor"+strElementLogicalName);
+				ExtentReporterNG.failurereason = e.getMessage(); 
+				Assert.fail();
+
+			}	
+		}
+
+
+	}
+	public static void pause(long seconds)
+	{
+		try {
+			Thread.sleep(seconds);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			ExtentReporterNG.screenshotname=takeScreenshot("pausefailure");
+			ExtentReporterNG.failurereason = e.getMessage(); 
+			Assert.fail();
+
+		}
+	}
+	public static void verifyAlertPopupMessage(String Message)
+	{try{
+
+		//To locate alert.
+		Alert A1 = getWebDriver().switchTo().alert();
+		//To read the text from alert popup.
+		String Alert1 = A1.getText();
+		AssertionOperations.verifyStringsEquality(Alert1, Message);
+		//To accept/Click Ok on alert popup.
+		A1.accept();
+		getWebDriver().switchTo().defaultContent();
+	}
+	catch(Exception e)
+	{
+		e.printStackTrace();
+		ExtentReporterNG.screenshotname=takeScreenshot("verifyAlertPopupMessage");
+		ExtentReporterNG.failurereason = e.getMessage(); 
+		Assert.fail();
+	}
+
+	}
+	public static int randNum() {
+		Random rn = new Random();
+		int randomNum;
+		randomNum = rn.nextInt();
+		return randomNum;
+	}
+	public static void selectValueFromlistUsingText(String elementName,String item)
+	{
+
+		try{
+			WebElement element = getElement(elementName);
+
+			Select dropdown = new Select(element);
+			dropdown.selectByVisibleText(item);
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			ExtentReporterNG.screenshotname=takeScreenshot("selectValueFromlistUsingText");
+			ExtentReporterNG.failurereason = e.getMessage(); 
+			Assert.fail();
+		}
+
+
+	}
+	public static String getText(String elementName)
+	{
+
+		WebElement element = getElement(elementName);
+
+		return element.getText();
+
+	}
+	public static String getTitle()
+	{
+		return getWebDriver().getTitle();
+	}
+	public static int getsize(String elementName)
+	{
+		List<WebElement> element = getElements(elementName);
+		return element.size();
+
+
+	}
+	public static void moveMouseAndClick(String hoverelementName,String clickelement)
+	{
+		try{
+			Actions action = new Actions(getWebDriver());
+			WebElement element = getElement(hoverelementName);
+			Thread.sleep(1000);
+			action.moveToElement(element).perform();
+			Thread.sleep(300);
+			WebElement element2 = getElement(clickelement);
+			element2.click();
+			System.out.println("hello");
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			ExtentReporterNG.screenshotname=takeScreenshot("moveMouseAndClick");
+			ExtentReporterNG.failurereason = e.getMessage(); 
+			Assert.fail();
+		}
+	}
+	public static void moveMouse(String hoverelementName)
+	{
+		try{
+			Actions action = new Actions(getWebDriver());
+			WebElement element = getElement(hoverelementName);
+			action.moveToElement(element).perform();
+		}
+
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			ExtentReporterNG.screenshotname = takeScreenshot("moveMouse");
+			ExtentReporterNG.failurereason = e.getMessage();
+			Assert.fail();
+		}
+	}
+	public static int getCount(String elementName)
+	{
+		List<WebElement> element  = getElements(elementName);
+		int count = element.size();
+		return count;
+	}
+	public static int getResponseCode(String urlString) throws MalformedURLException, IOException {
+		URL u = new URL(urlString); 
+		HttpURLConnection huc =  (HttpURLConnection)  u.openConnection(); 
+		huc.setRequestMethod("GET"); 
+		huc.connect(); 
+		return huc.getResponseCode();
+	}
+	public static void switchToNewTab(int tabnum)
+	{
+		try{
+			ArrayList<String> tabs2 = new ArrayList<String> (getWebDriver().getWindowHandles());
+			getWebDriver().switchTo().window(tabs2.get(tabnum));
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			ExtentReporterNG.screenshotname=takeScreenshot("switchToNewTab");
+			ExtentReporterNG.failurereason = e.getMessage(); 
+			Assert.fail();
+		}
+
+	}
+	public static void switchToFrame(String element)
+	{
+		try{
+			WebElement ele = getElement(element);
+			getWebDriver().switchTo().frame(ele);
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			ExtentReporterNG.screenshotname=takeScreenshot("switchToFrame");
+			ExtentReporterNG.failurereason = e.getMessage(); 
+			Assert.fail();
+		}
+	}
+	public static void swtichtoDefault()
+	{
+		try{
+			getWebDriver().switchTo().defaultContent();
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			ExtentReporterNG.screenshotname=takeScreenshot("swtichtoDefault");
+			ExtentReporterNG.failurereason = e.getMessage(); 
+			Assert.fail();
+		}
+	}
+	public static void deleteSinglechar(String elementname)
+	{
+		try{
+			WebElement element = getElement(elementname);
+			element.sendKeys("\u0008");
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			ExtentReporterNG.screenshotname=takeScreenshot("deleteSinglechar");
+			ExtentReporterNG.failurereason = e.getMessage(); 
+			Assert.fail();
+		}
+	}
+	public static String generateRandomString(int length){
+
+		return RandomStringUtils.randomAlphabetic(length);
+
+
+	}
+	public static String generateRandomAlphaNumeric(int length){
+		return RandomStringUtils.randomAlphanumeric(length);
+	}
+	public static void typeKeys(String element,String ch)
+	{
+		try
+		{
+			WebElement el = getElement(element);
+			el.sendKeys(Keys.chord(ch));
+		}
+		catch(Exception e)
+		{ e.printStackTrace();
+		ExtentReporterNG.screenshotname=takeScreenshot("deleteSinglechar");
+		ExtentReporterNG.failurereason = e.getMessage(); 
+		Assert.fail();
+		}
+	}
+	public static void pagescrollDown()
+	{
+		JavascriptExecutor jse = (JavascriptExecutor)getWebDriver();
+		jse.executeScript("window.scrollBy(0,250)", ""); //page scroll down
+	}
+	public static void pageScrollUp()
+	{JavascriptExecutor jse2 = (JavascriptExecutor)getWebDriver();
+	jse2.executeScript("window.scrollBy(0,-250)", ""); //page scroll up
+	}
+	public static void SelectElementFromColumns(String elementName,String clickelement){
+		try{
+			List<WebElement> trs= getElements(elementName);
+			if(trs.size()!=0){
+				for(WebElement tr:trs){
+					List<WebElement> tds=tr.findElements(By.xpath("td"));
+					if(tds.size()!=0){
+						for(WebElement td:tds){
+							String s=td.findElement(By.xpath("td")).getText();
+							System.out.println(s);
+							if (s.equals(clickelement)){
+								td.click();
+								break;
+							}
+						}
+					}
+				}
+			}
+			else
+			{
+				System.out.println("Element not found or not present");
+			}
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			ExtentReporterNG.screenshotname=takeScreenshot("selectValueFromlistUsingText");
+			ExtentReporterNG.failurereason = e.getMessage(); 
+			Assert.fail();
+		}
+
+
+	}
+	public static String getTagName(String element,String tag){
+		String s=null;
+		try
+		{
+			List <WebElement> el = getElements(element);
+			for(WebElement name:el){
+				s= name.getTagName();
+				if(s.equals(tag)){
+
+					break;
+				}		     
+			}       
+		}
+		catch(Exception e)
+		{ e.printStackTrace();
+		ExtentReporterNG.screenshotname=takeScreenshot("deleteSinglechar");
+		ExtentReporterNG.failurereason = e.getMessage(); 
+		Assert.fail();
+		}
+		return s;
+
+	}
+	public static void ClickandHold(String element){
+
+		WebElement webelement=getElement(element);
+		Actions action=new Actions(getWebDriver());
+		action.clickAndHold(webelement).perform();
+	}
+}

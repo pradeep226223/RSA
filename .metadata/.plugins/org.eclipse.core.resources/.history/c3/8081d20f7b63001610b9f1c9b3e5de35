@@ -1,0 +1,120 @@
+package com.devstringx.tests.web.RSA;
+
+import org.testng.annotations.Test;
+
+import com.devstringx.tests.web.RSA.Functions.CommonFunctions;
+import com.devstringx.utils.AssertionOperations;
+import com.devstringx.utils.FileOperations;
+
+/****************************************************
+ ******* Adding a New Contact (Manually)*************
+*****************************************************/
+
+public class AddContacts extends CommonFunctions{
+
+	public static String rndm = generateRandomAlphaNumeric(2);
+	static String contactName = "test"+rndm;
+
+	
+	/***
+	 * Positive
+	 * @throws InterruptedException
+	 */
+	@Test (priority=1)
+	public static void addingNewContact() throws InterruptedException
+	{
+		
+		//1) Hover over CRM ,2) Click on Contacts
+		//Click("CRMTab_xpath");
+		//moveMouseAndClick("CRMTab_xpath","CRMContactTab_xpath");
+		String url = FileOperations.getValueFromPropertyFile(configFilePath, "baseUrl");
+		getWebDriver().navigate().to(url + "contacts/lists"); // Need to look
+		Thread.sleep(1000);
+		
+		//3)Add new Contact
+		addContact(contactName);
+        Thread.sleep(1000);
+		
+      // Verify Contact should be added,by verifying Contact Listing should show new Contact
+		
+        //moveMouseAndClick("CRMTab_xpath","CRMContactTab_xpath");
+		getWebDriver().navigate().to(url + "contacts/lists"); // Need to look
+		refreshPage();
+		String AddedContact = getText("FirstContactName_xpath");
+		AssertionOperations.verifyStringsEquality(AddedContact, contactName);
+		
+	}
+	
+	
+	/***
+	 * Negative
+	 * @throws InterruptedException
+	 */
+	@Test(priority=2)
+	public static void addingNewContactWithoutEmail() throws InterruptedException
+	{
+		//1) Hover over CRM ,2) Click on Contacts
+		//Click("CRMTab_xpath");
+		//moveMouseAndClick("CRMTab_xpath","CRMContactTab_xpath");
+		String url = FileOperations.getValueFromPropertyFile(configFilePath, "baseUrl");
+		getWebDriver().navigate().to(url + "contacts/lists"); // Need to look
+
+		//3) Press + CONTACT button (top right corner)
+		waitUntilWebElementClickable("PlusContactBtn_xpath",120);
+		Click("PlusContactBtn_xpath");
+
+		Thread.sleep(1000);
+		waitUntilWebElementVisible("AddNewContactFormHeader_xpath", 120);
+
+		//4) In the Add New Contact Popup don't enter in the Email (mandatory) and fill in the other information
+		TypeText("firstNameTxtField_xpath", "TestFirstname");
+		TypeText("lastNameTxtField_xpath","TestSecondName");
+
+		//5) Click on Save and Close
+		Click("saveandCloseBtn_xpath");
+        
+		//VALIDATION ERROR
+		String ActualError1 = getText("ValidationPopupHeader_xpath");
+		AssertionOperations.verifyStringsEquality(ActualError1, "Validation Error");
+		
+		String ErrorMessage = getText("ValidationPopupmessage_xpath");
+		AssertionOperations.verifyStringsEquality(ErrorMessage, "Please fill in all of the required fields.");
+		
+		//click on cancel to close popup
+		Click("cancelBtn_xpath");
+		
+	}
+	
+	
+	/***
+	 ***NEGATIVE***
+	 * @throws InterruptedException
+	 */
+	@Test(priority=3)
+	public static void addingNewContactWithExistingEmail() throws InterruptedException
+	{
+		//1) Hover over CRM ,2) Click on Contacts
+			//Click("CRMTab_xpath");
+		//moveMouseAndClick("CRMTab_xpath","CRMContactTab_xpath");
+		String url = FileOperations.getValueFromPropertyFile(configFilePath, "baseUrl");
+		getWebDriver().navigate().to(url + "contacts/lists"); // Need to look
+
+		//3)Add new Contact
+			addContact(contactName);
+		    Thread.sleep(1000);
+
+		//VALIDATION ERROR
+		String ActualError2 = getText("ValidationPopupHeader_xpath");
+		AssertionOperations.verifyStringsEquality(ActualError2, "Error");
+		
+		String ErrorMessage = getText("ValidationPopupmessage_xpath");
+		AssertionOperations.verifyStringsEquality(ErrorMessage, "Contact already exist!");
+		
+		//click on cancel to close popup
+		Click("cancelBtn_xpath");
+
+	}
+
+
+}
+

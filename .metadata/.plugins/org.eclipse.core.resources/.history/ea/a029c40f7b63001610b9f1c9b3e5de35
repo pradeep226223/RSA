@@ -1,0 +1,111 @@
+package com.devstringx.tests.web.RSA;
+
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
+
+import com.devstringx.tests.web.RSA.Functions.CommonFunctions;
+import com.devstringx.utils.AssertionOperations;
+import com.devstringx.utils.ElementOperations;
+import com.devstringx.utils.FileOperations;
+
+public class NewSource extends CommonFunctions{
+
+	public static String rndm = generateRandomString(3);
+	
+	/**
+	 * Check to see if New Source can be added
+	 * @throws InterruptedException 
+	 */
+
+	@Test(priority=1)
+	public static void checkNewSource() throws InterruptedException
+	{
+		//2) Hover over CRM,3) Select Contacts
+		//moveMouseAndClick("CRMTab_xpath","CRMContactTab_xpath"); // click on CRM contacts
+		String url = FileOperations.getValueFromPropertyFile(configFilePath, "baseUrl");
+		getWebDriver().navigate().to(url + "contacts/lists"); // Need to look
+		
+		//4) Click on the 3 vertical dots
+		waitUntilWebElementClickable("ContactMoreBtn_xpath", 120); //wait for 3 dots visible
+		Click("ContactMoreBtn_xpath"); // Click on the 3 vertical dots
+
+		//5) Select Source List
+		Click("SourceListBtn_xpath"); 
+        Thread.sleep(1000);
+		waitUntilWebElementClickable("addContactSourceBtn_xpath",120);
+		
+		//6) Click the + CONTACT SOURCE button (Green button in top right)
+		Click("addContactSourceBtn_xpath");
+		
+		
+		waitUntilWebElementVisible("addSourcePopupHeader_xpath",120); //wait for add source page visible
+		waitUntilWebElementVisible("sourceInputTxtField_id",120);
+       	//7) Fill in the corresponding Popup (Source Name is the required field)
+            //For test purposes:Source Name: Test 101
+            //Pipeline for Deal Creation: New Pipeline
+            //Deal Assignee Name: Select a Name from dropdown
+		
+     	TypeText("sourceInputTxtField_id", "Test 101"+rndm); 
+		Click("selectPiplene_id"); //open pipeline dropdown
+		Click("pipelineOption1_xpath"); //select first option of pipeline
+		
+		Click("selectAssignee_id"); //open assignee
+		Click("assigneeOption_xpath"); //select assignee
+		
+		Click("addSourceSaveBtn_id"); //click on save button
+		AssertionOperations.verifyElementDisplayed("successMessage_xpath"); //check for successfull message displayed
+		
+		//search for New Source added into list
+		Click("allCheckBtn_xpath"); //click on search icon
+		
+		waitUntilWebElementVisible("addedSourceName_xpath",120);
+		//verify The Contact Source should be shown in the Contact Source Listing
+		String addedsource = getText("addedSourceName_xpath"); 
+		System.out.println(addedsource);
+		AssertionOperations.verifyStringsEquality(addedsource, "Test 101"+rndm);
+		Thread.sleep(1000);
+		
+	}
+	
+	
+	/***
+	 * Check if Custom sources is shown in Source Filter
+	 * @throws InterruptedException 
+	 */
+	@Test(priority=2)
+	public static void VerifyCustomSource() throws InterruptedException
+	{
+		
+		//2) Hover over CRM,3) Select Contacts
+		//moveMouseAndClick("CRMTab_xpath","CRMContactTab_xpath"); 
+
+		String url = FileOperations.getValueFromPropertyFile(configFilePath, "baseUrl");
+		getWebDriver().navigate().to(url + "contacts/lists"); // Need to look
+		refreshPage();
+		Thread.sleep(1000);
+		waitUntilWebElementClickable("filterGroupBtn_xpath", 120);
+		//4) Click on Filter icon (Upside down triangle)
+		Click("filterGroupBtn_xpath"); 
+		
+		//5) Click ADD FILTER button and select Source
+		waitUntilWebElementClickable("addFilterBtn_xpath", 120);
+		Click("addFilterBtn_xpath"); 
+		waitUntilWebElementClickable("SourceFilter_xpath", 120);
+		Click("SourceFilter_xpath"); 
+		
+		//6) From Source drop down check to see if New Source you added is shown
+		waitUntilWebElementClickable("SourceFilterdropdown_xpath", 120);
+		Click("SourceFilterdropdown_xpath"); 
+		TypeText("SearchInputTxtBox_xpath","Test 101"+rndm); //Search Above test added source to check to see if New Source you added is shown
+		
+		String source = getText("SourceSearchOption_xpath"); 
+		System.out.println(source);
+		AssertionOperations.verifyStringsEquality(source, "Test 101"+rndm);
+		//AssertionOperations.verifyElementDisplayed("SourceSearchOption_xpath"); //verify The new source added from above test should be seen.
+		
+		//moveMouseAndClick("CRMTab_xpath","CRMContactTab_xpath"); 
+		getWebDriver().navigate().to(url + "contacts/lists"); // Need to look
+		Thread.sleep(3000);
+	}
+}

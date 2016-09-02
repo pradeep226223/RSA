@@ -1,0 +1,181 @@
+package com.devstringx.tests.web.RSA;
+
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
+
+import com.devstringx.tests.web.RSA.Functions.CommonFunctions;
+import com.devstringx.utils.AssertionOperations;
+import com.devstringx.utils.ElementOperations;
+import com.devstringx.utils.FileOperations;
+
+public class FormsAndSource extends CommonFunctions{
+
+	public static String rndm = generateRandomString(3);
+
+	/**
+	 *  Set up a Form with Source and check to see if that is what shows in Timeline
+	 * @throws InterruptedException 
+	 */
+
+	@Test(priority=1)
+	public static void formsAndSource() throws InterruptedException
+	{
+
+		//2) Hover over Automation,3) Select Forms
+		//moveMouseAndClick("AutomationTab_xpath", "FormssubTab_xpath"); 
+		String url = FileOperations.getValueFromPropertyFile(configFilePath, "baseUrl");
+		getWebDriver().navigate().to(url + "forms"); // Need to look
+		Thread.sleep(3000);
+
+		//4) Add new Form
+		waitUntilWebElementClickable("addFormBtn_xpath", 120);
+		Click("addFormBtn_xpath"); //Click on Form Button to Open Add new Form
+		Thread.sleep(2000);
+		
+		//5) In the corresponding Popup put the Name of the Form and put a source,	Name: Form 101,	Source: 101 Form
+		waitUntilWebElementVisible("formNameField_id", 120);
+		TypeText("formNameField_id", "Form101"); 
+		TypeText("formSourceName_id","101 Form"); 
+
+		//6) Set up the Form
+		Click("createFormsaveBtn_xpath"); //Click Save and Set up the Form
+		Thread.sleep(2000);
+
+		//7) Hover over Automation and select Landing Page
+		//moveMouseAndClick("AutomationTab_xpath", "LandingsubTab_xpath");
+		getWebDriver().navigate().to(url + "content/landing_pages"); // Need to look
+		Thread.sleep(3000);
+
+		//8)Select a Landing Page template
+		Click("addLandingPageBtn_xpath");
+		Thread.sleep(1000);
+		waitUntilWebElementClickable("landingFirstTemplate_xpath", 120);
+		Click("landingFirstTemplate_xpath");
+
+		//moveMouseAndClick("landingFirstTemplate_xpath", "LandingcreateBtn_xpath");
+		Thread.sleep(1000);
+		TypeText("LandingfirstInputBox_xpath","Form101");
+		Click("LandingcreateBtn_xpath");
+		Thread.sleep(2000);
+
+		//9) Use the Form you created on the Landing Page (Form 101)
+		waitUntilWebElementVisible("LandingPagetitleTxtField_xpath", 120);
+
+		TypeText("LandingPagetitleTxtField_xpath", rndm + "TitleForTest");
+		TypeText("LandingPageSlugTextField_xpath",rndm + "PageslugForTest");
+
+		Thread.sleep(1000);
+		Click("LandingPageSaveBtn1_id");
+
+		Thread.sleep(1000);
+		//10) Publish Landing Page (After all required information is entered)
+		Click("LandingPagePublishingTab_xpath");
+		//12) Fill in the Form and Submit
+		Click("LandingPagePublishPageNowRadioBtn_xpath");
+		Thread.sleep(2000);
+
+		Click("LandingPageSaveBtn_id");
+
+		//11) View Live Landing Page
+		Click("viewLivePageBtn_xpath");
+
+		//go to contact page
+		// Hover over CRM  Click on Contacts
+		//moveMouseAndClick("CRMTab_xpath","CRMContactTab_xpath");
+		getWebDriver().navigate().to(url + "contacts/lists"); // Need to look
+        
+		Thread.sleep(1000);
+		waitUntilWebElementClickable("FirstContactName_xpath", 120);
+		//Click on First Name 
+		Click("FirstContactName_xpath");
+
+		waitUntilWebElementVisible("SourceValue_xpath", 120);
+		Thread.sleep(2000);
+		moveMouseAndClick("SourceValue_xpath", "SourceEditBtn_xpath");
+		TypeText("sourceInputBox_id","101 Form");
+		Thread.sleep(3000);
+		deleteSinglechar("sourceInputBox_id");
+		Thread.sleep(2000);
+		typeKeys("sourceInputBox_id","m");
+		Thread.sleep(2000);
+		//6) Select the Source
+		Click("sourceFirstOption_xpath"); 
+		refreshPage();
+		Thread.sleep(2000);
+		String actualActivitywithSource = getText("SourceValue_xpath");
+		AssertionOperations.verifyStringsEquality(actualActivitywithSource, "101 Form");
+		Thread.sleep(1000);
+
+	}
+
+	/***
+	 * Check to see if Sources are shown as you type in the Source Name
+	 * @throws InterruptedException 
+	 */
+	@Test(priority=2)
+	public static void sourceVisibilityInNewForm() throws InterruptedException
+	{
+
+		//2) Hover over Automation, 3) Select Forms
+		//moveMouseAndClick("AutomationTab_xpath", "FormssubTab_xpath");
+		String url = FileOperations.getValueFromPropertyFile(configFilePath, "baseUrl");
+		getWebDriver().navigate().to(url + "forms"); // Need to look
+
+		//4) Add new Form
+		Click("addFormBtn_xpath");
+		waitUntilWebElementVisible("formNameField_id", 120);
+		TypeText("formNameField_id", "Form101");
+		TypeText("formSourceName_id","101 Form");
+
+		Thread.sleep(2000);
+		deleteSinglechar("formSourceName_id");
+		Thread.sleep(2000);
+		typeKeys("formSourceName_id","m");
+		Thread.sleep(2000);
+
+		String option = getText("sourceList_xpath");
+
+		AssertionOperations.verifyStringsEquality(option,"101 Form");
+		TypeText("formNameField_id", "Form101");
+		Click("cancelBtn_xpath");
+		Thread.sleep(1000);
+
+
+	}
+
+	/***
+	 * Check if Custom source is shown in Source Filter
+	 * @throws InterruptedException 
+	 */
+	@Test(priority=3)
+	public static void customSourceInfilter() throws InterruptedException
+	{
+
+		//2) Hover over CRM,		 3) Select Contacts
+		//moveMouseAndClick("CRMTab_xpath","CRMContactTab_xpath");
+		String url = FileOperations.getValueFromPropertyFile(configFilePath, "baseUrl");
+		getWebDriver().navigate().to(url + "contacts/lists"); // Need to look
+
+		//4) Click on Filter icon (Upside down triangle)
+		waitUntilWebElementClickable("ContactMoreBtn_xpath", 120);
+		Click("filterGroupBtn_xpath");
+
+		//5) Click ADD FILTER button and select Source
+		Click("addFilterBtn_xpath");
+		Click("SourceFilter_xpath");
+
+		//6) From Source drop down check to see if New Source you added is shown
+		Click("SourceFilterdropdown_xpath");
+		TypeText("SearchInputTxtBox_xpath","101 Form");
+
+		//Click("SourceSearchOption_xpath");
+		String actualoption = getText("SourceSearchOption_xpath");
+		AssertionOperations.verifyStringsEquality(actualoption,"101 Form");
+		Thread.sleep(1000);
+		Click("SourceSearchOption_xpath");
+	}
+
+	
+
+}

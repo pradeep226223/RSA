@@ -1,0 +1,82 @@
+package com.devstringx.tests.web.RSA;
+
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
+
+import com.devstringx.utils.AssertionOperations;
+import com.devstringx.utils.ElementOperations;
+import com.devstringx.utils.FileOperations;
+
+
+public class SampleFile extends ElementOperations{
+
+	@BeforeTest
+	public static void Login() throws InterruptedException
+	{	
+		System.out.println("Hello Testing is started");
+		
+		waitUntilWebElementClickable("SignIn_xpath",120);
+		
+		TypeText("username_id",FileOperations.getValueFromPropertyFile(configFilePath,"username"));
+		
+		TypeText("password_id",FileOperations.getValueFromPropertyFile(configFilePath,"password"));
+		
+		Click("SignIn_xpath");
+		
+		Thread.sleep(5000);
+		//refreshPage();
+		waitUntilWebElementVisible("CRMTab_xpath", 120);
+	}
+	
+	@Test
+	public static void addingNewContact() throws InterruptedException
+	{
+		int rndm = randNum();
+		/***POSITIVE***/
+		
+		moveMouseAndClick("CRMTab_xpath","CRMContactTab_xpath");
+		
+		waitUntilWebElementClickable("PlusContactBtn_xpath",120);
+		
+		Click("PlusContactBtn_xpath");
+		
+		Thread.sleep(1000);
+		
+		waitUntilWebElementVisible("AddNewContactFormHeader_xpath", 120);
+		
+		TypeText("firstNameTxtField_xpath", FileOperations.getValueFromPropertyFile(configFilePath,"firstname"));
+		TypeText("lastNameTxtField_xpath",FileOperations.getValueFromPropertyFile(configFilePath,"lastname"));
+		TypeText("emailTxtField_xpath",rndm+FileOperations.getValueFromPropertyFile(configFilePath,"email"));
+		
+		Click("saveandCloseBtn_xpath");
+		AssertionOperations.verifyElementDisplayed("contactFullName_xpath");
+		
+		/***NEGATIVE***/
+		moveMouseAndClick("CRMTab_xpath","CRMContactTab_xpath");
+		waitUntilWebElementClickable("PlusContactBtn_xpath",120);
+		Click("PlusContactBtn_xpath");
+		Thread.sleep(1000);
+		waitUntilWebElementVisible("AddNewContactFormHeader_xpath", 120);
+		TypeText("firstNameTxtField_xpath", FileOperations.getValueFromPropertyFile(configFilePath,"firstname"));
+		TypeText("lastNameTxtField_xpath",FileOperations.getValueFromPropertyFile(configFilePath,"lastname"));
+		Click("saveandCloseBtn_xpath");
+		
+		
+		
+		/***NEGATIVE***/
+		moveMouseAndClick("CRMTab_xpath","CRMContactTab_xpath");
+		waitUntilWebElementClickable("PlusContactBtn_xpath",120);
+		Click("PlusContactBtn_xpath");
+		Thread.sleep(1000);
+		waitUntilWebElementVisible("AddNewContactFormHeader_xpath", 120);
+		TypeText("firstNameTxtField_xpath", FileOperations.getValueFromPropertyFile(configFilePath,"firstname"));
+		TypeText("lastNameTxtField_xpath",FileOperations.getValueFromPropertyFile(configFilePath,"lastname"));
+		TypeText("emailTxtField_xpath",FileOperations.getValueFromPropertyFile(configFilePath,"email"));
+		Click("saveandCloseBtn_xpath");
+		
+
+	}
+
+	
+	
+}

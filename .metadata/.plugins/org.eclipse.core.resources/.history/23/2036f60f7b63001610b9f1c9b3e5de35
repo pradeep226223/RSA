@@ -1,0 +1,156 @@
+package com.devstringx.tests.web.RSA;
+
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
+
+import com.devstringx.tests.web.RSA.Functions.CommonFunctions;
+import com.devstringx.utils.AssertionOperations;
+import com.devstringx.utils.ElementOperations;
+import com.devstringx.utils.FileOperations;
+
+/***
+ * Ability to add more than one subscriber list to an email campaign	
+ */
+public class SubscriberList extends CommonFunctions{
+
+	public static int rndm = randNum();
+	public static String new_email;
+
+	
+	/***
+	 * How to add a Subscriber list
+	 */
+
+	@Test(priority=1)
+	public static void AddSubscriberList()
+	{
+		//moveMouseAndClick("campaignTab_xpath", "subscriberSubTab_xpath");// Hover over the Campaigns option and select the Subscribers option:
+		String url = FileOperations.getValueFromPropertyFile(configFilePath, "baseUrl");
+		getWebDriver().navigate().to(url + "campaign/subscriber/lists"); // Need to look
+		waitUntilWebElementClickable("addlistBtn_xpath", 120);
+		//Click the + LIST green button in the top right:
+		Click("addlistBtn_xpath");
+		/*5. Enter the following details for your List:
+		 * List Name
+		 * Description
+		 * Single opt-in (no confirmation required) (Default)
+		 **/
+		TypeText("listNameInputTxtField_xpath","TestList"+rndm);
+		TypeText("listDescriptionTxtfield_xpath","Test For Subscriber");
+		Click("listSaveBtn_xpath"); //Press SAVE
+
+		//Once saved the next screen you will see is the Add Subscriber screen
+		AssertionOperations.verifyElementDisplayed("addSubscriberPageHeader_xpath"); 
+	}
+
+	/***
+	 * How to add a Subscriber to a list manually
+	 */
+	@Test(priority=2)
+	public static void AddSubscriberTolistManually()
+	{
+
+		//moveMouseAndClick("campaignTab_xpath", "subscriberSubTab_xpath");// Hover over the Campaigns option and select the Subscribers option:
+		String url = FileOperations.getValueFromPropertyFile(configFilePath, "baseUrl");
+		getWebDriver().navigate().to(url + "campaign/subscriber/lists"); // Need to look
+		waitUntilWebElementClickable("addlistBtn_xpath", 120);
+		//Click the + LIST green button in the top right:
+		Click("addlistBtn_xpath");
+		/*5. Enter the following details for your List:
+		 * List Name
+		 * Description
+		 * Single opt-in (no confirmation required) (Default)
+		 **/
+		TypeText("listNameInputTxtField_xpath","TestList"+rndm);
+		TypeText("listDescriptionTxtfield_xpath","Test For Subscriber");
+		Click("listSaveBtn_xpath"); //Press SAVE
+
+		//Once saved the next screen you will see is the Add Subscriber screen
+		waitUntilWebElementVisible("addSubscriberPageHeader_xpath",120); 
+
+		TypeText("addSubscriberEmailTxtField_xpath","abcd@gmail.com"); //type email
+		TypeText("addSubscriberfirstNameField_xpath","TestSubscriber"+rndm); //type firstname
+		TypeText("addSubscriberLastNameField_xpath","TestLast"); //type lastname
+		TypeText("phoneNumberfield_xpath","12312312"); //type phonenumber
+		Click("addSubscriberhasPermission_xpath"); //check permision checkbox
+		Click("addSubscriberAddBtn_xpath"); //click on add button to save subscriber
+
+		String addedSubcriberName = getText("subscriberlistfirstrowName_xpath");
+		AssertionOperations.verifyStringsEquality(addedSubcriberName,"TestSubscriber"+rndm);
+	}
+
+      /***
+        *Check to see if you can send to Multiple Subscriber Lists from Email Campaign
+     * @throws InterruptedException 
+       */
+	@Test(priority=3)
+	public static void sendMultiSubscriberlist() throws InterruptedException
+	{
+		
+		String url = FileOperations.getValueFromPropertyFile(configFilePath, "baseUrl");
+		getWebDriver().navigate().to(url + "campaign/lists/email"); // Need to look
+		waitUntilWebElementClickable("addCampaignBtn_xpath", 120);
+		
+		//moveMouseAndClick("campaignTab_xpath", "emailMarketingSubTab_xpath"); //) Hover over Campaigns, Select Email Marketing
+		//Set the name of the Campaign
+		Click("addCampaignBtn_xpath");
+		waitUntilWebElementVisible("campaignNameInputField_xpath", 120);
+		TypeText("campaignNameInputField_xpath","testCampaign");
+		
+		//Select Multiple Subscriber Lists  (For testing purposes you can have one contact in each of the lists, )
+		Click("addCampaignrecipientInput_xpath");
+		Click("addCampaignrecipientfirstItem_xpath");
+		Thread.sleep(3000);
+		
+		//The Subscriber lists should be added.
+		AssertionOperations.verifyElementDisplayed("selectedRecipeint_xpath"); 
+		
+		
+	}
+	
+	public static void sc() throws InterruptedException
+	{
+		
+		String url = FileOperations.getValueFromPropertyFile(configFilePath, "baseUrl");
+		getWebDriver().navigate().to(url + "campaign/lists/email"); // Need to look
+		waitUntilWebElementClickable("addCampaignBtn_xpath", 120);
+		
+		//moveMouseAndClick("campaignTab_xpath", "emailMarketingSubTab_xpath"); //) Hover over Campaigns, Select Email Marketing
+		//Set the name of the Campaign
+		Click("addCampaignBtn_xpath");
+		waitUntilWebElementVisible("campaignNameInputField_xpath", 120);
+		TypeText("campaignNameInputField_xpath","testCampaign");
+		
+		//Select Multiple Subscriber Lists  (For testing purposes you can have one contact in each of the lists, )
+		Click("addCampaignrecipientInput_xpath");
+		Click("addCampaignrecipientfirstItem_xpath");
+		Thread.sleep(3000);
+		
+		//The Subscriber lists should be added.
+		AssertionOperations.verifyElementDisplayed("selectedRecipeint_xpath"); 
+		
+		//5) Complete the rest of the Email Campaign
+		waitUntilWebElementClickable("addCampaignContinueBtn_xpath", 120);
+		Click("addCampaignContinueBtn_xpath");
+		Thread.sleep(3000);
+		switchToFrame("emailComposeiframe_xpath");
+		TypeText("emailComposeTextarea_xpath","Test For email Campaign");
+		swtichtoDefault();
+		Thread.sleep(3000);
+		waitUntilWebElementClickable("emailSaveAndContinueBtn_xpath", 120);
+		Click("emailSaveAndContinueBtn_xpath");
+
+		TypeText("emailSubject_xpath","testcom");
+		TypeText("fromEmail_xpath","test@gmail.com");
+		TypeText("fromName_xpath","helloWorld");
+		TypeText("replyTofield_xpath","abcd@gmail.com");
+		Click("emailSaveAndContinueBtn_xpath");
+		Click("defineDeliveryBtn_xpath");
+		
+		//6) Send out the campaign
+		Click("sendNowBtn_xpath");
+		
+		/**HalfDone as No Email found inbox**/
+	}
+
+}

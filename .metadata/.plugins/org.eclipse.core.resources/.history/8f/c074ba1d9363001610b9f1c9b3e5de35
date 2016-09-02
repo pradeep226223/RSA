@@ -1,0 +1,46 @@
+package com.devstringx.tests.web.RSA;
+
+import org.testng.annotations.Test;
+
+import com.devstringx.utils.ElementOperations;
+
+public class VeifyWithoutLogin extends ElementOperations{
+	
+	public static String rndm= ElementOperations.generateRandomAlphaNumeric(3);
+
+	@Test
+	public static void SignUp() throws InterruptedException{
+	    Click("SignUpButtonOnHomePage_xpath");//click on signup button
+		Thread.sleep(3000);
+		TypeText("FirstName_Xpath","Test"+rndm);//enter first name
+		
+		TypeText("LastName_Xpath","TT");//enter last name
+		
+		TypeText("Email_Xpath","email"+rndm+"@gmail.com");//email id
+		
+		TypeText("Password_xpath","test123!");//PWD
+		
+		Click("RadioButtonMale_Xpath");//Click radio button
+		
+		Click("TermsConditions_Xpath");//click on terms and conditions
+		Thread.sleep(2000);
+	    //Click("JoinButton_xpath");//Click Join button
+		Click("SignupCloseButton_xpath");//close signup pop
+	}
+	public static void VerifySearch(){
+		int i=23;
+		TypeText("FromAddress_Xapth","sector 50");//send text on from address
+		Thread.sleep(2000);
+		getWebDriver().findElement(By.xpath("//div[@class='pac-container pac-logo']/div[1]"))//Click on dropdown first value
+        TypeText("ToAddress_Xpath","setor 64");//send text on to address
+        Thread.sleep(2000);
+        driver.findElement(By.xpath("//div[@class='pac-container pac-logo']/div[1]")).click();//Click on dropdown first value
+        Thread.sleep(2000);
+        driver.findElement(By.xpath("//div[@data-toggle='header_datepicker']/span/i")).click();//Click on Date Icon
+        driver.findElement(By.xpath("//table[@class=' table-condensed']//tr//td[text()='"+i+"' and @class='day']")).click();//Click on date
+        driver.findElement(By.xpath("//input[@type='submit']")).click();//Click on search button
+        
+		
+	}
+
+}

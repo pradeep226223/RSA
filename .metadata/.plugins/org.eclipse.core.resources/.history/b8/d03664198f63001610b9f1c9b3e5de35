@@ -1,0 +1,55 @@
+package com.devstringx.tests.web.RSA;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.util.List;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.testng.annotations.Test;
+
+import com.devstringx.tests.web.RSA.Functions.CommonFunctions;
+
+public class SettingTab extends CommonFunctions{
+	@Test
+	public static void VerifyAllTabsInSettings() throws InterruptedException, IOException, IOException
+	{	
+	
+	waitUntilWebElementClickable("ProfileIcon_xpath",120);
+	Thread.sleep(2000);
+    Click("ProfileIcon_xpath");//click on profile icon
+	Thread.sleep(2000);
+	Click("Settings_Xpath");//Setting Tab
+	List<WebElement> Links=getWebDriver().findElements(By.xpath("a"));
+	int k=0;
+	for(WebElement Link:Links){
+		String URL=Link.findElement(By.xpath("a")).getAttribute("href");
+	
+			int i=getResponseCode(URL);
+			System.out.println(URL);
+			if (i!=200){
+				
+				k++;
+			}
+		
+		
+	}
+	System.out.println("Invalid Links   "+ k);
+	
+	waitUntilWebElementClickable("personalInfo_xpath",120);
+	Thread.sleep(2000);
+	Click("personalInfo_xpath");//personal info
+	
+	Thread.sleep(3000);
+	Click("ChangePassword_xpath");//change password
+	Thread.sleep(3000);
+	Click("Membership_xpath");//Membership
+	Thread.sleep(3000);
+	Click("Authentication_xpath");//Authentication
+	Thread.sleep(3000);
+	Click("VehicleSettings_xpath");//Vehicale settings
+	Thread.sleep(3000);
+	Click("Preferences_xpath");//preference
+	}
+
+}

@@ -1,0 +1,52 @@
+package com.devstringx.tests.web.RSA.Functions;
+
+import org.testng.annotations.BeforeClass;
+
+import com.devstringx.utils.FileOperations;
+import com.thoughtworks.selenium.webdriven.commands.TypeKeys;
+
+import java.util.List;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.testng.Assert;
+import org.testng.annotations.AfterClass;
+import com.devstringx.utils.ElementOperations;
+import com.devstringx.utils.ExtentReporterNG;
+import com.devstringx.utils.AssertionOperations;
+public class CommonFunctions extends ElementOperations{
+
+	@BeforeClass
+	public static void Login() throws InterruptedException
+	{	
+		System.out.println("Hello Testing is started");
+		waitUntilWebElementClickable("LoginButton_xpath",120);
+		Thread.sleep(1000);
+		///Enter User name
+		TypeText("LoginEmailAddress_xpath",FileOperations.getValueFromPropertyFile(configFilePath,"username"));
+		Thread.sleep(1000);
+		//Enter PAssword
+		TypeText("LoginPassword_xpath",FileOperations.getValueFromPropertyFile(configFilePath,"password"));
+		Thread.sleep(1000);
+		//click on sigin button
+		Click("LoginSumbitButton_Xpath");
+
+		Thread.sleep(1000);
+		//wait until CRM tab is visible
+		waitUntilWebElementVisible("ProfilePic_xpath", 120);
+	}
+	
+	@AfterClass
+	public static void Logout() throws InterruptedException
+	{
+		Thread.sleep(3000);
+		waitUntilWebElementClickable("ProfileIcon_xpath",120);
+	    Thread.sleep(1000);
+		Click("//img[@class='profile_img']");//click on profile icon
+		waitUntilWebElementClickable("//a[text()='Log Out']",120);
+		Thread.sleep(1000);
+		Click("//a[text()='Log Out']");//click on logout button
+		Thread.sleep(1000);
+        		
+	}	
+}

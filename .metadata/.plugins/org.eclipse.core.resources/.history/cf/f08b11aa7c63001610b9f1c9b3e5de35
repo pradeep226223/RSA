@@ -1,0 +1,79 @@
+LoginButton_xpath=//a[text()='Log In']
+LoginEmailAddress_xpath=//input[@placeholder='Email Address']
+LoginPassword_xpath=//input[@placeholder='Password']
+LoginSumbitButton_Xpath=//input[@id='login-btn']
+SignUpButtonPopUp_Xpath=//button[text()='Sign Up']
+
+OfferLiftButton_Xpath=//a[text()='Offer a Lift']
+SearchLiftButton_Xpath=//a[text()='Search for a Lift']
+MessageButton_Xpath=//a[@class='message-btn']
+FromAddress_Xapth=//input[@name='search_from' and @data-field='header_start_end']
+ToAddress_Xpath=//input[@name='search_to' and @data-field='header_start_end']
+CalenderIcon_Xpath=//div[@data-toggle='header_datepicker']/span/i
+DatePicker_xpath=//table[@class=' table-condensed']//tr//td[text()='23' and @class='day']
+SearchButton_Xpath=//input[@type='submit']
+
+#SignUP Page
+SignUpButtonOnHomePage_xpath=//a[text()='Sign Up']
+FirstName_Xpath=//form[@id='sign-up-form']//input[@name='first_name']
+LastName_Xpath=//form[@id='sign-up-form']//input[@name='last_name']
+Email_Xpath=//form[@id='sign-up-form']//input[@name='email']
+Password_xpath=//form[@id='sign-up-form']//input[@name='password']
+RadioButtonMale_Xpath=//span[text()='Male']/../div[@class='radio']
+RadioButtonFemale_Xpath=//span[text()='Female']/../div[@class='radio']
+TermsConditions_Xpath=//input[@type='checkbox' and @name='terms_conditions']
+JoinButton_xpath=//input[@value='Join']
+SignupCloseButton_xpath=//a[@data-role='model-close']
+//span[@class='icon gritter gritter-error']
+
+#ProfileSetings
+ProfileIcon_xpath=//img[@class='profile_img']
+MyAccount_Xpath=//a[text()='My Account']
+MyTrips_Xpath=//a[text()='My Trips']
+MyRatings_Xpath=//a[text()='Ratings']
+Settings_Xpath=//a[text()='Settings']
+LogOut_Xpath=//a[text()='Log Out']
+
+#Account settings
+personalInfo_xpath=//div[@class='left-menu']//a[text()='Personal Info']
+ChangePassword_xpath=//div[@class='left-menu']//a[text()='Change Password']
+Membership_xpath=//div[@class='left-menu']//a[text()='Membership']
+Authentication_xpath=//div[@class='left-menu']//a[text()='Authentication']
+VehicleSettings_xpath=//div[@class='left-menu']//a[text()='Vehicle Settings']
+Preferences_xpath=//div[@class='left-menu']//a[text()='Preferences']
+
+#PersonalInfoEditPage
+
+FirstName_Xpath=//input[@name='first_name']
+LastName_Xpath=//input[@name='last_name']
+Phone_Xpath=//input[@name='phone']
+AddPhoneButton_xpath=//a[@class='input-add-btn pull-left phn-field-add']
+ExtraPhone1_xpath=//input[@name='extra_phone1']
+ExtraPhone2_xpath=//input[@name='extra_phone2']
+Email_xpath=//input[@name='email']
+AddEmailButton_xpath=//a[@class='input-add-btn pull-left email-field-add']
+ExtraEmail1_xpath=//input[@name='extra_email1']
+ExtraEmail2_xpath=//input[@name='extra_email2']
+Address1_xpath=//input[@name='address1']
+Address2_xpath=//input[@name='address2']
+City_xpath=//input[@name='city']
+UserDescription_Xpath=//textarea[@name='user_description']
+SmokerYesradiobutton_xpath=//span[text()='Yes']/..//div[@class='radio']
+SmokerNoradiobutton_xpath=//span[text()='No']/..//div[@class='radio']
+DateOfBith_xpath=//div[@data-toggle='datepicker']//i
+Occupation_xpath=//input[@name='occupation']
+Languagedropdown_xpath=//input[@class='select2-search__field']
+SelectLanguageEnglish_xpath=//span[@class='select2-results']/ul/li[1]
+SelectLanguageFrench_xpath=//span[@class='select2-results']/ul/li[2]
+MaritalStatusSingleRadioButton_xpath=//span[text()='Single']/../div[@class='radio']
+MaritalStatusMarriedRadioButton_xpath=//span[text()='Married']/../div[@class='radio']
+GenderMaleRadioButton_xpath=//span[text()='Male']/../div[@class='radio']
+GenderFemaleRadioButton_xpath=//span[text()='Female']/../div[@class='radio']
+
+
+
+SaveButton_xpath=//input[@id='personal-info-btn']
+
+
+
+

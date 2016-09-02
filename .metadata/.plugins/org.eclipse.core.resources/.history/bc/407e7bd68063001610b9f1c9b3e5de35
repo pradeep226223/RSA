@@ -1,0 +1,29 @@
+package com.devstringx.tests.web.RSA;
+
+public class SettingTab extends CommonFunctions{
+	
+	public static void VerifyAllTabsInSettings()
+	{	Thread.sleep(4000);
+	waitUntilWebElementClickable("ProfileIcon_xpath",120);
+	Thread.sleep(2000);
+	driver.findElement(By.xpath("//img[@class='profile_img']")).click();//click on profile icon
+	Thread.sleep(2000);
+	driver.findElement(By.xpath("//a[text()='Settings']")).click();//Setting Tab
+	WaitToElementClickable(driver.findElement(By.xpath("//div[@class='left-menu']//a[text()='Personal Info']")),120);
+	Thread.sleep(2000);
+	driver.findElement(By.xpath("//div[@class='left-menu']//a[text()='Personal Info']")).click();//personal info
+	Thread.sleep(5000);
+	driver.findElement(By.xpath("//div[@class='left-menu']//a[text()='Change Password']")).click();//change password
+	Thread.sleep(5000);
+	
+	driver.findElement(By.xpath("//div[@class='left-menu']//a[text()='Membership']")).click();//Membership
+	Thread.sleep(5000);
+	
+	driver.findElement(By.xpath("//div[@class='left-menu']//a[text()='Authentication']")).click();//Authentication
+	Thread.sleep(5000);
+	driver.findElement(By.xpath("//div[@class='left-menu']//a[text()='Vehicle Settings']")).click();//Vehicale settings
+	Thread.sleep(5000);
+	driver.findElement(By.xpath("//div[@class='left-menu']//a[text()='Preferences']")).click();//preference
+	}
+
+}
