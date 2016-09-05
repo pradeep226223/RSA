@@ -1,0 +1,4 @@
+test:
+  override:
+    - chmod +x drivers/chromedriver
+    - mvn test
